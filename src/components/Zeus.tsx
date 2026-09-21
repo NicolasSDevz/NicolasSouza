@@ -1,20 +1,10 @@
 import { useEffect } from 'react'
+import { strike } from '../zeus'
 
 // Easter egg: uma falha quase invisível na logo, de vez em quando, e um raio ao digitar "zeus".
 export default function Zeus() {
   useEffect(() => {
     console.log('%c⚡ zeus', 'color:#ff3b3b;font-weight:700;font-size:14px')
-
-    const strike = () => {
-      const wrap = document.createElement('div')
-      wrap.innerHTML =
-        '<div class="zeus-flash"></div>' +
-        '<div class="zeus-bolt"><svg viewBox="0 0 140 800" preserveAspectRatio="none">' +
-        '<path pathLength="1" d="M78 0 L48 250 L82 262 L34 520 L66 530 L22 800"/></svg></div>' +
-        '<div class="zeus-tag">ZEUS</div>'
-      document.body.append(wrap)
-      setTimeout(() => wrap.remove(), 2200)
-    }
 
     let buf = ''
     const key = (e: KeyboardEvent) => {

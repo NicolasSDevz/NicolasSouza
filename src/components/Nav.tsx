@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
 import { go } from '../hooks'
 import Mark from './Mark'
+import { scramble } from '../scramble'
+
+const mod = /Mac|iPhone|iPad/.test(navigator.platform) ? '⌘' : 'Ctrl'
+const canMotion = !matchMedia('(prefers-reduced-motion: reduce)').matches
 
 const items = [
   ['sobre', 'Sobre'],
@@ -45,10 +49,18 @@ export default function Nav() {
       </a>
       <div className="nav-links">
         {items.map(([id, label]) => (
-          <button key={id} className={active === id ? 'active' : ''} onClick={() => go(id)}>
+          <button
+            key={id}
+            className={active === id ? 'active' : ''}
+            onClick={() => go(id)}
+            onMouseEnter={(e) => canMotion && scramble(e.currentTarget)}
+          >
             {label}
           </button>
         ))}
+        <button className="kbd" onClick={() => dispatchEvent(new Event('open-palette'))} aria-label="Abrir paleta de comandos">
+          {mod} K
+        </button>
         <a
           className="cta"
           href="#contato"

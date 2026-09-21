@@ -93,6 +93,7 @@ function DotField() {
       raf = 0
       tctx.clearRect(0, 0, w, h)
       if (!visible) return
+      const rgb = getComputedStyle(document.documentElement).getPropertyValue('--accent-rgb').trim() || '255,59,59'
       const x0 = Math.max(Math.floor((m.x - R) / sp), 0)
       const x1 = Math.ceil((m.x + R) / sp)
       const y0 = Math.max(Math.floor((m.y - R) / sp), 0)
@@ -108,7 +109,7 @@ function DotField() {
           const k = 1 - d / R
           tctx.beginPath()
           tctx.arc(x + (dx / d) * k * 10, y + (dy / d) * k * 10, 1 + k * 2.2, 0, 6.283)
-          tctx.fillStyle = `rgba(255, 59, 59,${0.15 + k * 0.7})`
+          tctx.fillStyle = `rgba(${rgb},${0.15 + k * 0.7})`
           tctx.fill()
         }
       }

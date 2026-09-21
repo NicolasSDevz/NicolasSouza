@@ -7,6 +7,7 @@ export default function Footer() {
         </div>
         <div className="foot">
           <div>© {new Date().getFullYear()} Nicolas Souza · Feito com React, TypeScript e Vite</div>
+          <button onClick={() => dispatchEvent(new Event('open-palette'))}>Comandos · Ctrl K</button>
           <button data-magnetic onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             Voltar ao topo ↑
           </button>

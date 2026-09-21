@@ -3,6 +3,7 @@ import Preloader from './components/Preloader'
 import Cursor from './components/Cursor'
 import Zeus from './components/Zeus'
 import Hud from './components/Hud'
+import Palette from './components/Palette'
 import { scramble } from './scramble'
 import Background from './components/Background'
 import Nav from './components/Nav'
@@ -76,6 +77,7 @@ export default function App() {
       <Cursor />
       <Zeus />
       <Hud />
+      <Palette />
       <Background />
       <Nav />
       <main>
