@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import Mark from './Mark'
 
 // linhas do "boot" e o ponto do progresso em que cada uma aparece
 const log: Array<[number, string, boolean]> = [
@@ -58,6 +57,7 @@ export default function Preloader() {
   }, [])
 
   if (gone) return null
+  const num = String(Math.round(n * 100)).padStart(3, '0')
   return (
     <div className={'pre' + (out ? ' out' : '')} aria-hidden>
       <div className="tiles" style={{ ['--cols' as string]: grid.cols, ['--rows' as string]: grid.rows }}>
@@ -66,7 +66,13 @@ export default function Preloader() {
         ))}
       </div>
       <div className="center">
-        <Mark progress={n} />
+        <div className="pre-big" aria-hidden>
+          <span className="ghost">{num}</span>
+          <span className="fill" style={{ clipPath: `inset(${100 - n * 100}% 0 0 0)` }}>
+            {num}
+          </span>
+          <sup>%</sup>
+        </div>
         <div className="pre-name">
           Nicolas Souza
           <small>Desenvolvedor Full Stack</small>
@@ -78,7 +84,6 @@ export default function Preloader() {
             </div>
           ))}
         </div>
-        <div className="pre-count">{String(Math.round(n * 100)).padStart(3, '0')}</div>
       </div>
     </div>
   )

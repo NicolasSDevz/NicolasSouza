@@ -108,7 +108,7 @@ function DotField() {
           const k = 1 - d / R
           tctx.beginPath()
           tctx.arc(x + (dx / d) * k * 10, y + (dy / d) * k * 10, 1 + k * 2.2, 0, 6.283)
-          tctx.fillStyle = `rgba(200,255,46,${0.15 + k * 0.7})`
+          tctx.fillStyle = `rgba(255, 59, 59,${0.15 + k * 0.7})`
           tctx.fill()
         }
       }

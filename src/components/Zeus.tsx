@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 // Easter egg: uma falha quase invisível na logo, de vez em quando, e um raio ao digitar "zeus".
 export default function Zeus() {
   useEffect(() => {
-    console.log('%c⚡ zeus', 'color:#c8ff2e;font-weight:700;font-size:14px')
+    console.log('%c⚡ zeus', 'color:#ff3b3b;font-weight:700;font-size:14px')
 
     const strike = () => {
       const wrap = document.createElement('div')
