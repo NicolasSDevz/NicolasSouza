@@ -386,7 +386,7 @@ footer { padding: 3rem 0 2rem; overflow: hidden; }
 
 /* ---------- showcase (janelas de código que se abrem em camadas) ---------- */
 section.show { padding: 0; height: 340vh; position: relative; }
-.show-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; --r: 0; --s: 0; --l: 0; --in: 0; }
+.show-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; --r: 0; --s: 0; --l: 0; --in: 0; --t: 0; }
 .show-grid { display: grid; grid-template-columns: .78fr 1.22fr; gap: 1.5rem; align-items: center; width: 100%; }
 .show-copy .h2 { font-size: clamp(30px, 4.2vw, 54px); }
 .caps { position: relative; height: 150px; margin-top: 1.4rem; }
@@ -450,3 +450,14 @@ section.show { padding: 0; height: 340vh; position: relative; }
   section.show { height: auto; }
   .show-sticky { position: relative; height: auto; padding: 5rem 0; }
 }
+
+/* terminal: se expande quando chega no deploy */
+.l-term { bottom: calc(var(--t) * -130px); transform: translateZ(calc(var(--i) * (4px + var(--s) * 96px) + var(--t) * 40px)); }
+.win-code .pb { display: block; width: 240px; height: 8px; margin: 5px 0; border-radius: 4px; background: #2c2c32; overflow: hidden; }
+.win-code .pb i { display: block; height: 100%; width: 100%; border-radius: 4px; background: var(--accent); }
+[data-live="1"][data-stage="3"] .win-code .pb i { width: 0; animation: fillbar .9s ease-out forwards; animation-delay: var(--d); }
+@keyframes fillbar { to { width: 100%; } }
+.live { margin-left: auto; display: none; align-items: center; gap: 6px; font-family: var(--display); font-size: 10px; font-weight: 600; letter-spacing: .16em; color: var(--accent); opacity: 0; }
+.live::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: ping 1.6s infinite; }
+.live { display: flex; }
+[data-live="1"][data-stage="3"] .live { animation: fadein .4s 3.9s forwards; }

@@ -6,7 +6,7 @@ const stages = [
   { t: 'Front-end', p: 'React e TypeScript: componentes reutilizáveis e tipados, com interface rápida e responsiva.' },
   { t: 'Back-end', p: 'APIs em Node.js e .NET cuidam das regras de negócio, da autenticação e das integrações.' },
   { t: 'Banco de dados', p: 'Modelagem em MySQL, MongoDB e Firebase, pensada para o produto crescer.' },
-  { t: 'Deploy', p: 'Build, versionamento com Git e publicação na Vercel. Do commit ao ar.' },
+  { t: 'Deploy', p: 'Build, versionamento com Git e publicação na Vercel. Do commit ao ar, em um comando.' },
 ]
 
 // ---- código exibido nas janelas ----
@@ -43,11 +43,17 @@ const sql = [
 ]
 const term = [
   '$ git commit -m "feat: proposals"',
+  '[main 3f9a1c2] 4 files changed',
   '$ npm run build',
+  'vite building for production...',
+  '✓ 142 modules transformed',
   '✓ built in 2.1s',
   '$ vercel --prod',
+  'deploying to production...',
   '✓ deployed to production',
+  '$ ',
 ]
+const TERM_BAR_AFTER = 7 // barra de progresso depois da linha "deploying..."
 
 type Tok = [string, string]
 const RE =
@@ -69,7 +75,23 @@ function highlight(line: string): Tok[] {
   return out
 }
 
-function Win({ cls, i, file, lines, caret }: { cls: string; i: number; file: string; lines: string[]; caret?: boolean }) {
+function Win({
+  cls,
+  i,
+  file,
+  lines,
+  caret,
+  barAfter,
+  live,
+}: {
+  cls: string
+  i: number
+  file: string
+  lines: string[]
+  caret?: boolean
+  barAfter?: number
+  live?: boolean
+}) {
   return (
     <div className={'layer ' + cls} style={{ ['--i' as string]: i }}>
       <div className="win-bar">
@@ -77,21 +99,36 @@ function Win({ cls, i, file, lines, caret }: { cls: string; i: number; file: str
         <i />
         <i />
         <em>{file}</em>
+        {live && <span className="live">LIVE</span>}
       </div>
       <div className="win-code">
-        {lines.map((line, li) => (
-          <div className="row" key={li}>
-            <span className="no">{li + 1}</span>
-            <span className="ln" style={{ ['--n' as string]: line.length, ['--d' as string]: `${0.15 + li * 0.22}s` }}>
-              {highlight(line).map(([c, x], k) => (
-                <span key={k} className={c}>
-                  {x}
+        {lines.map((line, li) => {
+          const shift = barAfter !== undefined && li > barAfter ? 1 : 0 // depois da barra, o resto espera ela encher
+          const d = 0.15 + li * 0.22 + shift * 0.9
+          return (
+            <div key={li}>
+              <div className="row">
+                <span className="no">{li + 1}</span>
+                <span className="ln" style={{ ['--n' as string]: line.length, ['--d' as string]: `${d}s` }}>
+                  {highlight(line).map(([c, x], k) => (
+                    <span key={k} className={c}>
+                      {x}
+                    </span>
+                  ))}
+                  {caret && li === lines.length - 1 && <span className="caret" />}
                 </span>
-              ))}
-              {caret && li === lines.length - 1 && <span className="caret" />}
-            </span>
-          </div>
-        ))}
+              </div>
+              {barAfter === li && (
+                <div className="row">
+                  <span className="no" />
+                  <span className="pb" style={{ ['--d' as string]: `${d + 0.35}s` }}>
+                    <i />
+                  </span>
+                </div>
+              )}
+            </div>
+          )
+        })}
       </div>
     </div>
   )
@@ -112,14 +149,16 @@ export default function Showcase() {
       const s = clamp((p - 0.3) / 0.32)
       const l = clamp((p - 0.6) / 0.18)
       const inn = clamp(p / 0.08)
+      const t = clamp((p - 0.72) / 0.2)
       const stage = p < 0.28 ? 0 : p < 0.5 ? 1 : p < 0.75 ? 2 : 3
-      const key = [r, s, l, inn].map((v) => v.toFixed(3)).join() + stage
+      const key = [r, s, l, inn, t].map((v) => v.toFixed(3)).join() + stage
       if (key === lastKey && !force) return
       lastKey = key
       st.style.setProperty('--r', String(r))
       st.style.setProperty('--s', String(s))
       st.style.setProperty('--l', String(l))
       st.style.setProperty('--in', String(inn))
+      st.style.setProperty('--t', String(t))
       st.dataset.stage = String(stage)
     }
 
@@ -188,7 +227,7 @@ export default function Showcase() {
           <div className="scene" aria-hidden>
             <div className="persp">
               <div className="stack">
-                <Win cls="l-term" i={0} file="terminal" lines={term} caret />
+                <Win cls="l-term" i={0} file="terminal · deploy" lines={term} caret barAfter={TERM_BAR_AFTER} live />
                 <Win cls="l-sql" i={1} file="schema.sql" lines={sql} />
                 <Win cls="l-api" i={2} file="server.ts" lines={api} />
                 <Win cls="l-react" i={3} file="ProposalCard.tsx" lines={react} />
