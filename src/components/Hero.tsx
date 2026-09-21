@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { go, useLoaded } from '../hooks'
 
-const words = ['aplicações web.', 'apps mobile.', 'APIs e sistemas.', 'sites rápidos.']
+const words = ['aplicações web.', 'plataformas SaaS.', 'apps mobile.', 'APIs e sistemas.']
 
 function useTyper(start: boolean) {
   const [text, setText] = useState('')
@@ -108,7 +108,7 @@ function DotField() {
           const k = 1 - d / R
           tctx.beginPath()
           tctx.arc(x + (dx / d) * k * 10, y + (dy / d) * k * 10, 1 + k * 2.2, 0, 6.283)
-          tctx.fillStyle = `rgba(255,255,255,${0.15 + k * 0.7})`
+          tctx.fillStyle = `rgba(200,255,46,${0.15 + k * 0.7})`
           tctx.fill()
         }
       }
@@ -142,55 +142,81 @@ function DotField() {
   )
 }
 
-// Alvo com flecha: assinatura visual
-function Target() {
+// Editor de código digitando o perfil
+type Tok = [string, string]
+const code: Tok[][] = [
+  [['k', 'const'], ['', ' nicolas '], ['p', '= {']],
+  [['', '  '], ['m', 'role'], ['p', ': '], ['s', '"Full Stack Developer"'], ['p', ',']],
+  [['', '  '], ['m', 'stack'], ['p', ': ['], ['s', '"React"'], ['p', ', '], ['s', '"Node.js"'], ['p', ', '], ['s', '"TypeScript"'], ['p', '],']],
+  [['', '  '], ['m', 'mobile'], ['p', ': ['], ['s', '"Expo"'], ['p', ', '], ['s', '"Flutter"'], ['p', '],']],
+  [['', '  '], ['m', 'building'], ['p', ': '], ['s', '"Deal Shot"'], ['p', ',']],
+  [['', '  '], ['m', 'openToWork'], ['p', ': '], ['k', 'true'], ['p', ',']],
+  [['p', '};']],
+]
+const term: Tok[][] = [
+  [['m', '$ '], ['', 'npm run build']],
+  [['ok', '✓ built in 2.4s']],
+]
+
+function Editor() {
   const tilt = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const el = tilt.current!
     const move = (e: PointerEvent) => {
       const x = e.clientX / innerWidth - 0.5
       const y = e.clientY / innerHeight - 0.5
-      el.style.transform = `rotateY(${x * 12}deg) rotateX(${-y * 12}deg)`
+      el.style.transform = `rotateY(${x * 8}deg) rotateX(${-y * 8}deg)`
     }
     addEventListener('pointermove', move, { passive: true })
     return () => removeEventListener('pointermove', move)
   }, [])
 
+  let t = 1.5
+  const rows = [...code, null, ...term].map((toks, i) => {
+    if (!toks) return <div key={i} className="sep" />
+    const n = toks.reduce((a, [, x]) => a + x.length, 0)
+    const d = t
+    t += n * 0.016 + 0.12
+    return { toks, n, d, i }
+  })
+  const last = rows[rows.length - 1] as { d: number; n: number }
+  const cd = last.d + last.n * 0.016
+
+  let no = 0
   return (
-    <div className="target-wrap" aria-hidden>
-      <div className="target-tilt" ref={tilt}>
-        <svg className="target" viewBox="0 0 400 400">
-          {[180, 135, 90, 45].map((r, k) => (
-            <circle
-              key={r}
-              className="ring"
-              cx="200"
-              cy="200"
-              r={r}
-              pathLength="1"
-              transform="rotate(-90 200 200)"
-              style={{ ['--k' as string]: k }}
-            />
-          ))}
-          <circle className="orbit" cx="200" cy="200" r="198" pathLength="200" />
-          <circle className="ripple" cx="200" cy="200" r="14" style={{ ['--k' as string]: 0 }} />
-          <circle className="ripple" cx="200" cy="200" r="14" style={{ ['--k' as string]: 1 }} />
-          <circle className="bull" cx="200" cy="200" r="14" />
-          <g transform="translate(200 200) rotate(-32)">
-            <g className="arrow">
-              <line x1="16" y1="0" x2="176" y2="0" stroke="#ededee" strokeWidth="3.5" strokeLinecap="round" />
-              <polygon points="0,0 24,-8 24,8" fill="#ffffff" />
-              <polygon points="150,0 172,-13 182,-13 166,0" fill="#6a6a72" />
-              <polygon points="150,0 172,13 182,13 166,0" fill="#6a6a72" />
-              <polygon points="164,0 184,-11 192,-11 176,0" fill="#ededee" />
-              <polygon points="164,0 184,11 192,11 176,0" fill="#ededee" />
-            </g>
-          </g>
-        </svg>
+    <div className="editor-wrap" aria-hidden>
+      <div className="editor-tilt" ref={tilt}>
+        <div className="editor">
+          <div className="editor-bar">
+            <i />
+            <i />
+            <i />
+            <em>nicolas.ts</em>
+          </div>
+          <div className="code">
+            {rows.map((r, idx) => {
+              if ('type' in (r as object)) return r as JSX.Element
+              const { toks, n, d } = r as { toks: Tok[]; n: number; d: number }
+              no++
+              return (
+                <div className="row" key={idx}>
+                  <span className="no">{no}</span>
+                  <span className="ln" style={{ ['--n' as string]: n, ['--d' as string]: `${d}s` }}>
+                    {toks.map(([c, x], k) => (
+                      <span key={k} className={c}>
+                        {x}
+                      </span>
+                    ))}
+                  </span>
+                  {idx === rows.length - 1 && <span className="caret" style={{ ['--cd' as string]: `${cd}s` }} />}
+                </div>
+              )
+            })}
+          </div>
+        </div>
         <span className="chip c1">React</span>
         <span className="chip c2">Node.js</span>
         <span className="chip c3">TypeScript</span>
-        <span className="chip c4">Expo</span>
       </div>
     </div>
   )
@@ -235,7 +261,7 @@ export default function Hero() {
             </button>
           </div>
         </div>
-        <Target />
+        <Editor />
       </div>
       <div className="scroll-hint">
         scroll

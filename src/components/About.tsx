@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 // Palavras iniciadas com "_" ganham destaque
 const statement =
-  'Sou desenvolvedor full stack e construo aplicações web e mobile de ponta a ponta com _JavaScript,_ _React_ e Node.js. Acredito que bom software vai além de funcionar: precisa ser legível, fácil de manter e preparado para _crescer._'
+  'Sou desenvolvedor full stack e construo aplicações web e mobile de ponta a ponta com _JavaScript,_ _React_ e Node.js. Hoje lanço o _Deal_ _Shot,_ uma plataforma SaaS de orçamentos, sempre buscando código legível e preparado para _crescer._'
 
 // Acende as palavras conforme o scroll (só processa enquanto está na tela)
 function ScrollText() {
@@ -112,26 +112,26 @@ export default function About() {
               <span className="yr">ATUAL</span>
               <div>
                 <b>Desenvolvedor na Arrow Shot</b>
-                <small>Sites para empresas de limpeza</small>
+                <small>Sites e o SaaS Deal Shot</small>
               </div>
             </div>
           </div>
           <div className="stats reveal" style={{ ['--d' as string]: '.15s' }}>
             <div className="stat">
-              <Count to={3} suffix="+" />
+              <Count to={3} />
               <small>sites em produção</small>
             </div>
             <div className="stat">
-              <Count to={3} />
-              <small>projetos pessoais</small>
+              <Count to={2} />
+              <small>sistemas web (Deal Shot e Extintores)</small>
             </div>
             <div className="stat">
               <Count to={19} />
               <small>tecnologias na stack</small>
             </div>
             <div className="stat">
-              <Count to={2} />
-              <small>formações em TI</small>
+              <Count to={3} />
+              <small>projetos pessoais</small>
             </div>
           </div>
         </div>

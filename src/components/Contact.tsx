@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 const EMAIL = 'nicolasouzaxx@gmail.com'
+const WHATS = 'https://wa.me/5551998058521?text=Ol%C3%A1%20Nicolas!'
 
 export default function Contact() {
   const [copied, setCopied] = useState(false)
@@ -26,11 +27,14 @@ export default function Contact() {
             Vamos construir algo <span className="em">juntos?</span>
           </h2>
           <p>
-            Tem um projeto, uma vaga ou uma ideia? Fale comigo. Estou aberto a oportunidades CLT como
-            desenvolvedor júnior.
+            Tem um projeto, uma vaga ou uma ideia? Fale comigo. Estou aberto a oportunidades CLT como desenvolvedor
+            júnior.
           </p>
           <div className="row">
-            <a className="btn primary" data-magnetic href={`mailto:${EMAIL}`}>
+            <a className="btn primary" data-magnetic href={WHATS} target="_blank" rel="noopener noreferrer">
+              WhatsApp · (51) 99805-8521 <span className="arr">↗</span>
+            </a>
+            <a className="btn" data-magnetic href={`mailto:${EMAIL}`}>
               {EMAIL} <span className="arr">↗</span>
             </a>
             <button className="btn" data-magnetic onClick={copy}>

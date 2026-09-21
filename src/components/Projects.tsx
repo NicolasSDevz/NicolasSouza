@@ -3,11 +3,12 @@ interface Project {
   name: string
   description: string
   tags: string[]
-  url: string
   display: string
+  url?: string // sem url = sem link (privado ou só projeto pessoal)
+  restricted?: boolean
 }
 
-const featured: Project[] = [
+const sites: Project[] = [
   {
     type: 'site institucional · Arrow Shot',
     name: 'Limpeza Técnica',
@@ -37,31 +38,36 @@ const featured: Project[] = [
   },
 ]
 
-const studies: Project[] = [
+const others: Project[] = [
+  {
+    type: 'sistema web',
+    name: 'Orçamento de Extintores',
+    description: 'Sistema web para gerar orçamentos de extintores. Em produção, com acesso restrito.',
+    tags: ['Em produção', 'Sistema web'],
+    display: 'acesso restrito',
+    restricted: true,
+  },
   {
     type: 'mobile app',
     name: 'QRHUNT',
     description:
       'App para escanear QR Codes e colecionar insígnias em um inventário pessoal, com Firebase para dados e imagens.',
     tags: ['Expo', 'React', 'Firebase', 'QR Scanner'],
-    url: 'https://github.com/DevNicolas01',
-    display: 'github.com/DevNicolas01',
+    display: 'projeto pessoal',
   },
   {
     type: 'landing page',
     name: 'Bistrô',
     description: 'Landing page elegante para restaurante, com cardápio e informações de contato.',
     tags: ['HTML', 'Tailwind', 'Vite', 'JavaScript'],
-    url: 'https://github.com/DevNicolas01',
-    display: 'github.com/DevNicolas01',
+    display: 'projeto pessoal',
   },
   {
     type: 'landing page',
     name: 'Surf',
     description: 'Landing page moderna para marca de surf, com galeria e seção de produtos.',
     tags: ['HTML', 'Tailwind', 'Vite', 'JavaScript'],
-    url: 'https://github.com/DevNicolas01',
-    display: 'github.com/DevNicolas01',
+    display: 'projeto pessoal',
   },
 ]
 
@@ -77,81 +83,172 @@ const untilt = (e: React.MouseEvent<HTMLElement>) => {
 }
 
 function Card({ p, i }: { p: Project; i: number }) {
-  return (
-    <a
-      className="project reveal"
-      href={p.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{ ['--d' as string]: `${i * 0.1}s` }}
-      onMouseMove={tilt}
-      onMouseLeave={untilt}
-    >
-      <div className="tilt">
-        <div className="browser">
-          <div className="bar">
-            <i />
-            <i />
-            <i />
-            <em>{p.display}</em>
-          </div>
-          <div className="shot">
-            <div className="page">
-              <div className="w-nav">
-                <div className="logo-pill">{p.name}</div>
-                <span />
-                <span />
-                <span />
-                <b />
+  const inner = (
+    <div className="tilt">
+      <div className="browser">
+        <div className="bar">
+          <i />
+          <i />
+          <i />
+          <em>{p.display}</em>
+        </div>
+        <div className="shot">
+          <div className="page">
+            <div className="w-nav">
+              <div className="logo-pill">{p.name}</div>
+              <span />
+              <span />
+              <span />
+              <b />
+            </div>
+            <div className="w-hero">
+              <div className="lines">
+                <i />
+                <i />
+                <u />
+                <u />
+                <em />
               </div>
-              <div className="w-hero">
-                <div className="lines">
-                  <i />
-                  <i />
-                  <u />
-                  <u />
-                  <em />
-                </div>
-                <div className="img" />
-              </div>
-              <div className="w-row">
+              <div className="img" />
+            </div>
+            <div className="w-row">
+              <i />
+              <i />
+              <i />
+            </div>
+            <div className="w-band" />
+            <div className="w-row">
+              <i />
+              <i />
+              <i />
+            </div>
+            <div className="w-hero">
+              <div className="img" />
+              <div className="lines">
                 <i />
                 <i />
-                <i />
-              </div>
-              <div className="w-band" />
-              <div className="w-row">
-                <i />
-                <i />
-                <i />
-              </div>
-              <div className="w-hero">
-                <div className="img" />
-                <div className="lines">
-                  <i />
-                  <i />
-                  <u />
-                  <u />
-                </div>
+                <u />
+                <u />
               </div>
             </div>
-            <span className="visit">Visitar ↗</span>
           </div>
+          {p.url && <span className="visit">Visitar ↗</span>}
         </div>
-        <div className="info">
-          <div className="type">{p.type}</div>
-          <h3>
-            {p.name} <span className="arr">↗</span>
-          </h3>
-          <p>{p.description}</p>
-          <div className="tags">
-            {p.tags.map((t) => (
-              <span key={t}>{t}</span>
+      </div>
+      <div className="info">
+        <div className="type">{p.type}</div>
+        <h3>
+          <span>
+            {p.name}
+            {p.restricted && <span className="pill-tag">Acesso restrito</span>}
+          </span>
+          {p.url && <span className="arr">↗</span>}
+        </h3>
+        <p>{p.description}</p>
+        <div className="tags">
+          {p.tags.map((t) => (
+            <span key={t}>{t}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+  const common = {
+    style: { ['--d' as string]: `${i * 0.1}s` },
+    onMouseMove: tilt,
+    onMouseLeave: untilt,
+  }
+  return p.url ? (
+    <a className="project reveal" href={p.url} target="_blank" rel="noopener noreferrer" data-cursor="VER" {...common}>
+      {inner}
+    </a>
+  ) : (
+    <div className="project static reveal" {...common}>
+      {inner}
+    </div>
+  )
+}
+
+const dealFeatures = [
+  'Calculadora de preço em 5 etapas, com alerta de margem baixa',
+  'Funil de propostas com follow-up e registro de pagamento',
+  'Apresentação em slides (Padrão + Premium) e PDF do orçamento',
+  'Painel de resultados e painel administrativo (MRR, clientes)',
+]
+
+function DealShot() {
+  return (
+    <div className="feature reveal">
+      <div>
+        <div className="status">Em lançamento · acesso restrito</div>
+        <h3>
+          Deal <span className="em">Shot</span>
+        </h3>
+        <p className="desc">
+          Plataforma por assinatura para empresas de limpeza montarem orçamentos profissionais, apresentarem a proposta
+          e acompanharem a venda até o recebimento. Da Arrow Shot, desenvolvida por mim.
+        </p>
+        <ul className="feat-list">
+          {dealFeatures.map((f) => (
+            <li key={f}>{f}</li>
+          ))}
+        </ul>
+        <div className="tags">
+          {['React 19', 'TypeScript', 'Vite', 'Firebase', 'Vercel', 'jsPDF'].map((t) => (
+            <span key={t}>{t}</span>
+          ))}
+        </div>
+        <div className="note">Produto pago, ainda sem acesso público.</div>
+      </div>
+      <div className="app" aria-hidden>
+        <div className="app-bar">
+          <i />
+          <i />
+          <i />
+          <em>deal shot · propostas</em>
+        </div>
+        <div className="app-body">
+          <div className="steps">
+            {[1, 2, 3, 4, 5].map((n) => (
+              <span key={n} className={n <= 3 ? 'on' : ''}>
+                {n}
+              </span>
             ))}
+            <small>Calculadora · etapa 3 de 5</small>
+          </div>
+          <div className="kanban">
+            <div className="col">
+              <h4>Em aberto</h4>
+              <div className="kcard" style={{ ['--k' as string]: 0 }}>
+                Pós-obra · Apto 82<b>R$ 4.850</b>
+              </div>
+              <div className="kcard" style={{ ['--k' as string]: 1 }}>
+                Fachada · Edifício<b>R$ 7.200</b>
+              </div>
+            </div>
+            <div className="col">
+              <h4>Aguardando</h4>
+              <div className="kcard" style={{ ['--k' as string]: 2 }}>
+                Pós-obra · Loja<b>R$ 3.400</b>
+              </div>
+            </div>
+            <div className="col">
+              <h4>Fechado</h4>
+              <div className="kcard won" style={{ ['--k' as string]: 3 }}>
+                Pós-obra · Casa<b>R$ 5.900</b>
+              </div>
+            </div>
+          </div>
+          <div className="meter-row">
+            Margem
+            <div className="meter">
+              <i />
+            </div>
+            <b>32%</b>
           </div>
         </div>
       </div>
-    </a>
+    </div>
   )
 }
 
@@ -164,18 +261,23 @@ export default function Projects() {
             <b>03</b> projetos
           </div>
           <h2 className="h2">
-            Sites <span className="em">em produção</span> e projetos pessoais.
+            Do site ao <span className="em">SaaS.</span>
           </h2>
-          <p className="lead">Sites que desenvolvi na Arrow Shot para empresas de limpeza, e projetos próprios. Passe o mouse e clique para visitar.</p>
+          <p className="lead">Sites em produção, uma plataforma em lançamento e projetos próprios.</p>
         </div>
+
+        <DealShot />
+
+        <h3 className="sub-title reveal">Sites em produção · Arrow Shot</h3>
         <div className="projects">
-          {featured.map((p, i) => (
+          {sites.map((p, i) => (
             <Card key={p.name} p={p} i={i} />
           ))}
         </div>
-        <h3 className="sub-title reveal">Projetos pessoais</h3>
+
+        <h3 className="sub-title reveal">Sistemas e projetos pessoais</h3>
         <div className="projects">
-          {studies.map((p, i) => (
+          {others.map((p, i) => (
             <Card key={p.name} p={p} i={i} />
           ))}
         </div>

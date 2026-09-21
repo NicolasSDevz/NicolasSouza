@@ -1,53 +1,43 @@
 import { useEffect, useRef } from 'react'
 
+// Ponto neon: cresce em links/botões e mostra um rótulo (ex.: "VER") em elementos com data-cursor.
 export default function Cursor() {
-  const dot = useRef<HTMLDivElement>(null)
-  const ring = useRef<HTMLDivElement>(null)
+  const el = useRef<HTMLDivElement>(null)
+  const label = useRef<HTMLElement>(null)
 
   useEffect(() => {
     if (!matchMedia('(pointer: fine)').matches) return
-    const d = dot.current!
-    const r = ring.current!
+    const c = el.current!
     document.body.classList.add('has-cursor')
-    let x = 0
-    let y = 0
-    let rx = 0
-    let ry = 0
-    let raf = 0
-    // o loop só roda enquanto o anel ainda está alcançando o ponto
-    const loop = () => {
-      rx += (x - rx) * 0.2
-      ry += (y - ry) * 0.2
-      r.style.transform = `translate3d(${rx}px,${ry}px,0)`
-      raf = Math.abs(x - rx) + Math.abs(y - ry) > 0.3 ? requestAnimationFrame(loop) : 0
-    }
     const move = (e: PointerEvent) => {
-      x = e.clientX
-      y = e.clientY
-      d.style.transform = `translate3d(${x}px,${y}px,0)`
-      d.classList.add('show')
-      r.classList.add('show')
-      if (!raf) raf = requestAnimationFrame(loop)
+      c.style.transform = `translate3d(${e.clientX}px,${e.clientY}px,0)`
+      c.classList.add('show')
     }
     const over = (e: PointerEvent) => {
-      r.classList.toggle('hover', !!(e.target as Element).closest('a,button'))
+      const t = e.target as Element
+      const tag = t.closest<HTMLElement>('[data-cursor]')
+      if (tag) {
+        label.current!.textContent = tag.dataset.cursor || ''
+        c.classList.add('label')
+        c.classList.remove('hover')
+      } else {
+        c.classList.remove('label')
+        c.classList.toggle('hover', !!t.closest('a,button'))
+      }
     }
     addEventListener('pointermove', move, { passive: true })
     addEventListener('pointerover', over, { passive: true })
     return () => {
       document.body.classList.remove('has-cursor')
-      cancelAnimationFrame(raf)
       removeEventListener('pointermove', move)
       removeEventListener('pointerover', over)
     }
   }, [])
 
   return (
-    <>
-      <div className="cursor-dot" ref={dot} />
-      <div className="cursor-ring" ref={ring}>
-        <i />
-      </div>
-    </>
+    <div className="cur" ref={el}>
+      <i />
+      <b ref={label} />
+    </div>
   )
 }

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import Preloader from './components/Preloader'
 import Cursor from './components/Cursor'
+import Zeus from './components/Zeus'
 import Background from './components/Background'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
@@ -55,6 +56,7 @@ export default function App() {
     <>
       <Preloader />
       <Cursor />
+      <Zeus />
       <Background />
       <Nav />
       <main>

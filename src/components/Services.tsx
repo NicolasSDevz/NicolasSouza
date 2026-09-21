@@ -58,9 +58,9 @@ export default function Services() {
           <div className="card wide reveal">
             <div className="ico">{icons.target}</div>
             <div className="big">
-              Dev na Arrow Shot, construindo sites para empresas de <span className="em">limpeza.</span>
+              Dev na Arrow Shot: sites e um SaaS para empresas de <span className="em">limpeza.</span>
             </div>
-            <p>A Arrow Shot é uma agência de marketing para limpeza. Eu cuido do desenvolvimento dos sites dos clientes.</p>
+            <p>A Arrow Shot é uma agência de marketing para limpeza. Eu desenvolvo os sites dos clientes e o Deal Shot, plataforma de orçamentos.</p>
           </div>
           {cards.map((c, i) => (
             <div key={c.t} className="card reveal" style={{ ['--d' as string]: `${(i % 3) * 0.08}s` }}>
