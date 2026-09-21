@@ -103,6 +103,43 @@ function LiveLogs({ on }: { on: boolean }) {
   )
 }
 
+// ícones de dev ao redor do terminal; um por vez "acende"
+const DEVICON = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons'
+const tools: Array<{ n: string; i: string; x: number; y: number; side?: boolean }> = [
+  { n: 'React', i: 'react/react-original', x: -170, y: -285 },
+  { n: 'TypeScript', i: 'typescript/typescript-original', x: 0, y: -285 },
+  { n: 'Node.js', i: 'nodejs/nodejs-original', x: 170, y: -285 },
+  { n: 'Git', i: 'git/git-original', x: 335, y: 0, side: true },
+  { n: 'Docker', i: 'docker/docker-original', x: 170, y: 285 },
+  { n: 'Firebase', i: 'firebase/firebase-plain', x: 0, y: 285 },
+  { n: 'MySQL', i: 'mysql/mysql-original', x: -170, y: 285 },
+  { n: 'VS Code', i: 'vscode/vscode-original', x: -335, y: 0, side: true },
+]
+
+function Orbit({ on }: { on: boolean }) {
+  const [hot, setHot] = useState(0)
+  useEffect(() => {
+    if (!on) return
+    setHot(0)
+    const iv = window.setInterval(() => setHot((h) => (h + 1) % tools.length), 1100)
+    return () => clearInterval(iv)
+  }, [on])
+  return (
+    <div className="orbit">
+      {tools.map((t, k) => (
+        <div
+          key={t.n}
+          className={'otool' + (hot === k ? ' hot' : '') + (t.side ? ' side' : '')}
+          style={{ left: `calc(50% + ${t.x}px)`, top: `calc(50% + ${t.y}px)`, ['--k' as string]: k }}
+        >
+          <img src={`${DEVICON}/${t.i}.svg`} alt="" width={26} height={26} loading="lazy" />
+          <span>{t.n}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 type Tok = [string, string]
 const RE =
   /(--.*$|\/\/.*$)|('[^']*'|"[^"]*")|(<\/?[A-Z]\w*)|\b(export|function|const|return|await|async|CREATE|TABLE|NOT|NULL|PRIMARY|KEY|DEFAULT|INT|VARCHAR|DECIMAL|ENUM|DATETIME|NOW)\b|(\b\d+\b)|(\b[a-zA-Z_]\w*)(?=\()|(^\$ |^✓.*$)/g
@@ -226,7 +263,7 @@ export default function Showcase() {
       const key = [r, s, l, inn, t].map((v) => v.toFixed(3)).join() + stage
       if (key === lastKey && !force) return
       lastKey = key
-      st.style.setProperty('--r', String(r))
+      st.style.setProperty('--r', String(r * (1 - t)))
       st.style.setProperty('--s', String(s))
       st.style.setProperty('--l', String(l))
       st.style.setProperty('--in', String(inn))
@@ -314,6 +351,7 @@ export default function Showcase() {
                 <Win cls="l-api" i={2} file="server.ts" lines={api} />
                 <Win cls="l-react" i={3} file="ProposalCard.tsx" lines={react} />
               </div>
+              <Orbit on={logging} />
               <div className="labs">
                 <div className="lab lab-react" style={{ ['--k' as string]: 3 }}>
                   Front-end <small>React · TypeScript</small>
