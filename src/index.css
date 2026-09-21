@@ -38,25 +38,31 @@ section { padding: 6rem 0; }
 
 .em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--accent); letter-spacing: -0.01em; }
 
-/* ---------- preloader (boot + blocos que colapsam) ---------- */
+/* ---------- preloader (fresta que se abre + nome + blocos que colapsam) ---------- */
 .pre { position: fixed; inset: 0; z-index: 500; }
 .pre.out { pointer-events: none; }
 .tiles { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(var(--cols), 1fr); grid-template-rows: repeat(var(--rows), 1fr); }
 .tile { background: #09090b; box-shadow: inset 0 0 0 1px rgba(255, 59, 59, .07); }
 .pre.out .tile { animation: tileout .6s var(--ease) forwards; animation-delay: calc(var(--dl) * 1ms); }
 @keyframes tileout { 0% { transform: scale(1); background: #1a0b0b; box-shadow: inset 0 0 0 1px rgba(255, 59, 59, .8); } 100% { transform: scale(0) rotate(35deg); opacity: 0; } }
-.pre .center { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.3rem; transition: opacity .3s, transform .5s var(--ease); }
-.pre.out .center { opacity: 0; transform: scale(1.06); }
-.pre-big { position: relative; display: flex; align-items: flex-start; font-family: var(--display); font-weight: 600; font-size: clamp(96px, 22vw, 230px); line-height: .85; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
-.pre-big .ghost { color: rgba(255, 255, 255, .06); -webkit-text-stroke: 1px rgba(255, 255, 255, .22); }
-.pre-big .fill { position: absolute; left: 0; top: 0; color: var(--accent); }
-.pre-big sup { font-size: .22em; letter-spacing: 0; color: var(--muted); margin-left: 8px; }
-.pre-name { font-family: var(--display); font-size: 13px; letter-spacing: .3em; text-transform: uppercase; color: var(--text); text-align: center; }
-.pre-name small { display: block; margin-top: 6px; font-size: 11px; letter-spacing: .22em; color: var(--muted); }
-.pre-log { width: min(320px, 80vw); min-height: 6.6em; font-family: ui-monospace, 'Cascadia Code', Consolas, monospace; font-size: 12px; line-height: 1.7; color: var(--muted); }
-.pre-log div { animation: up .3s var(--ease) forwards; opacity: 0; transform: translateY(6px); }
-.pre-log .ok { color: var(--accent); }
-.pre-count { font-family: var(--display); font-size: 13px; letter-spacing: .2em; color: var(--accent); font-variant-numeric: tabular-nums; }
+.pre .center { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; transition: opacity .3s, transform .6s var(--ease); }
+.pre.out .center { opacity: 0; transform: scale(1.08); }
+.pre-line { position: absolute; left: 50%; top: 50%; height: 2px; width: min(64vw, 560px); margin-top: -1px; background: var(--accent); box-shadow: 0 0 30px 4px rgba(255, 59, 59, .55); transform: translateX(-50%) scaleX(0); animation: pline .55s var(--ease) forwards, pfade .4s ease 1s forwards; }
+@keyframes pline { to { transform: translateX(-50%) scaleX(1); } }
+@keyframes pfade { to { opacity: 0; } }
+.pre-slot { text-align: center; padding: .12em 1.2rem; clip-path: inset(50% 0 50% 0); animation: slot .95s cubic-bezier(.76, 0, .24, 1) .5s forwards; }
+@keyframes slot { to { clip-path: inset(0 0 0 0); } }
+.pre-name { font-family: var(--display); font-weight: 600; font-size: clamp(54px, 15.5vw, 200px); line-height: .92; letter-spacing: -0.055em; text-transform: uppercase; }
+.pre-name .r { display: block; overflow: hidden; padding-bottom: .06em; }
+.pre-name .em { text-transform: none; font-size: 1.08em; letter-spacing: -0.02em; }
+.pre-name .pl { display: inline-block; transform: translateY(108%); animation: rise 1s var(--ease) forwards; animation-delay: calc(.8s + var(--i) * .05s); }
+.pre-sub { margin-top: 1.3rem; text-align: center; font-size: 12px; letter-spacing: .34em; text-transform: uppercase; color: var(--muted); opacity: 0; animation: fadein .8s 1.75s forwards; }
+.pre-corner { position: absolute; z-index: 2; font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); opacity: 0; animation: fadein .8s .9s forwards; }
+.pre-corner.tl { top: 1.6rem; left: 1.8rem; }
+.pre-corner.tr { top: 1.6rem; right: 1.8rem; }
+.pre-corner.bl { bottom: 1.6rem; left: 1.8rem; }
+.pre-corner.br { bottom: 1.6rem; right: 1.8rem; }
+.pre.out .pre-corner { opacity: 0; animation: none; }
 
 /* ---------- logo ---------- */
 .mark { display: block; overflow: visible; }

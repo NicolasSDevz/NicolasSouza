@@ -1,16 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 
-// linhas do "boot" e o ponto do progresso em que cada uma aparece
-const log: Array<[number, string, boolean]> = [
-  [0.02, '> iniciando portfólio…', false],
-  [0.25, '✓ react', true],
-  [0.45, '✓ typescript', true],
-  [0.65, '✓ node.js', true],
-  [0.9, '✓ pronto.', true],
-]
+const split = (text: string, start: number) =>
+  [...text].map((ch, i) => (
+    <span key={i} className="pl" style={{ ['--i' as string]: start + i }}>
+      {ch}
+    </span>
+  ))
 
 export default function Preloader() {
-  const [n, setN] = useState(0)
   const [out, setOut] = useState(false)
   const [gone, setGone] = useState(false)
 
@@ -29,35 +26,20 @@ export default function Preloader() {
 
   useEffect(() => {
     const root = document.documentElement
-    const dur = matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 2400
-    const t0 = performance.now()
-    let raf = 0
-    const timers: number[] = []
-    const step = (t: number) => {
-      const p = Math.min((t - t0) / dur, 1)
-      setN(1 - Math.pow(1 - p, 1.8))
-      if (p < 1) {
-        raf = requestAnimationFrame(step)
-        return
-      }
-      setOut(true)
-      timers.push(
-        window.setTimeout(() => {
-          root.classList.remove('loading')
-          root.classList.add('loaded')
-        }, 650),
-        window.setTimeout(() => setGone(true), 2100)
-      )
-    }
-    raf = requestAnimationFrame(step)
-    return () => {
-      cancelAnimationFrame(raf)
-      timers.forEach(clearTimeout)
-    }
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+    const hold = reduce ? 50 : 2800 // tempo até a abertura dos blocos
+    const timers = [
+      window.setTimeout(() => setOut(true), hold),
+      window.setTimeout(() => {
+        root.classList.remove('loading')
+        root.classList.add('loaded')
+      }, hold + 650),
+      window.setTimeout(() => setGone(true), hold + 2100),
+    ]
+    return () => timers.forEach(clearTimeout)
   }, [])
 
   if (gone) return null
-  const num = String(Math.round(n * 100)).padStart(3, '0')
   return (
     <div className={'pre' + (out ? ' out' : '')} aria-hidden>
       <div className="tiles" style={{ ['--cols' as string]: grid.cols, ['--rows' as string]: grid.rows }}>
@@ -65,24 +47,20 @@ export default function Preloader() {
           <div key={i} className="tile" style={{ ['--dl' as string]: dl }} />
         ))}
       </div>
+      <span className="pre-corner tl">Nicolas Souza</span>
+      <span className="pre-corner tr">©{new Date().getFullYear()}</span>
+      <span className="pre-corner bl">Full Stack</span>
+      <span className="pre-corner br">Portfólio</span>
       <div className="center">
-        <div className="pre-big" aria-hidden>
-          <span className="ghost">{num}</span>
-          <span className="fill" style={{ clipPath: `inset(${100 - n * 100}% 0 0 0)` }}>
-            {num}
-          </span>
-          <sup>%</sup>
-        </div>
-        <div className="pre-name">
-          Nicolas Souza
-          <small>Desenvolvedor Full Stack</small>
-        </div>
-        <div className="pre-log">
-          {log.filter(([at]) => n >= at).map(([, text, ok]) => (
-            <div key={text} className={ok ? 'ok' : ''}>
-              {text}
+        <div className="pre-line" />
+        <div>
+          <div className="pre-slot">
+            <div className="pre-name">
+              <span className="r">{split('Nicolas', 0)}</span>
+              <span className="r em">{split('Souza', 7)}</span>
             </div>
-          ))}
+          </div>
+          <div className="pre-sub">Desenvolvedor Full Stack</div>
         </div>
       </div>
     </div>
