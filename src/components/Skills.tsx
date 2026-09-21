@@ -1,5 +1,3 @@
-import SectionLabel from './SectionLabel'
-
 interface Skill {
   name: string
   icon: string
@@ -14,7 +12,7 @@ const skills: Skill[] = [
   { name: 'Node.js', icon: 'nodejs/nodejs-original', highlight: true },
   { name: 'C#', icon: 'csharp/csharp-original', highlight: true },
   { name: '.NET', icon: 'dotnetcore/dotnetcore-original', highlight: true },
-  { name: 'Expo', icon: 'expo/expo-original' },
+  { name: 'Expo', icon: 'expo/expo-original', invert: true },
   { name: 'Tailwind', icon: 'tailwindcss/tailwindcss-original' },
   { name: 'Vite', icon: 'vitejs/vitejs-original' },
   { name: 'Firebase', icon: 'firebase/firebase-plain' },
@@ -29,68 +27,37 @@ const skills: Skill[] = [
   { name: 'Dart', icon: 'dart/dart-original' },
 ]
 
-const DEVICON_BASE = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons'
+const BASE = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons'
 
 export default function Skills() {
   return (
-    <section id="skills" style={{ marginBottom: '3.5rem' }}>
-      <SectionLabel>skills</SectionLabel>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
-        gap: '10px',
-      }}>
-        {skills.map((skill) => (
-          <div
-            key={skill.name}
-            style={{
-              background: skill.highlight ? 'rgba(110,231,183,0.04)' : 'var(--bg2)',
-              border: `1px solid ${skill.highlight ? 'var(--accent-border)' : 'var(--border)'}`,
-              borderRadius: '10px',
-              padding: '14px 10px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '8px',
-              transition: 'border-color 0.2s, background 0.2s',
-              cursor: 'default',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = skill.highlight
-                ? 'var(--accent)'
-                : 'var(--border-hover)'
-              e.currentTarget.style.background = skill.highlight
-                ? 'rgba(110,231,183,0.08)'
-                : '#1c1c1c'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = skill.highlight
-                ? 'var(--accent-border)'
-                : 'var(--border)'
-              e.currentTarget.style.background = skill.highlight
-                ? 'rgba(110,231,183,0.04)'
-                : 'var(--bg2)'
-            }}
-          >
-            <img
-              src={`${DEVICON_BASE}/${skill.icon}.svg`}
-              alt={skill.name}
-              width={32}
-              height={32}
-              style={{
-                objectFit: 'contain',
-                filter: skill.invert ? 'invert(1)' : 'none',
-              }}
-            />
-            <span style={{
-              fontSize: '11px',
-              color: skill.highlight ? 'var(--accent)' : 'var(--muted)',
-              textAlign: 'center',
-            }}>
-              {skill.name}
-            </span>
-          </div>
-        ))}
+    <section id="skills">
+      <div className="wrap">
+        <div className="reveal">
+          <div className="label">skills</div>
+          <h2 className="h2">
+            Stack do <span className="grad-text">dia a dia.</span>
+          </h2>
+        </div>
+        <div className="skills">
+          {skills.map((s, i) => (
+            <div
+              key={s.name}
+              className={`skill reveal${s.highlight ? ' hl' : ''}`}
+              style={{ ['--d' as string]: `${(i % 6) * 0.05}s` }}
+            >
+              <img
+                src={`${BASE}/${s.icon}.svg`}
+                alt={s.name}
+                width={34}
+                height={34}
+                loading="lazy"
+                style={{ filter: s.invert ? 'invert(1)' : 'none' }}
+              />
+              <span>{s.name}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )

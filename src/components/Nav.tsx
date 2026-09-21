@@ -1,41 +1,50 @@
-const scrollTo = (id: string) => {
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
-}
+import { useEffect, useState } from 'react'
+
+const items = [
+  ['sobre', 'Sobre'],
+  ['arrow-shot', 'Arrow Shot'],
+  ['projetos', 'Projetos'],
+  ['skills', 'Skills'],
+]
+
+const go = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
 
 export default function Nav() {
+  const [active, setActive] = useState('')
+
+  useEffect(() => {
+    const io = new IntersectionObserver(
+      (es) => es.forEach((e) => e.isIntersecting && setActive(e.target.id)),
+      { rootMargin: '-45% 0px -50% 0px' }
+    )
+    items.forEach(([id]) => {
+      const el = document.getElementById(id)
+      if (el) io.observe(el)
+    })
+    return () => io.disconnect()
+  }, [])
+
   return (
-    <nav style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      paddingBottom: '2.5rem',
-      borderBottom: '1px solid var(--border)',
-      marginBottom: '3.5rem',
-    }}>
-      <div style={{ fontSize: '15px', fontWeight: 500 }}>
-        Nicolas<span style={{ color: 'var(--accent)' }}>.Dev</span>
-      </div>
-      <div style={{ display: 'flex', gap: '1.5rem' }}>
-        {['Sobre', 'Skills', 'Projetos', 'Contato'].map((item) => (
-          <button
-            key={item}
-            onClick={() => scrollTo(item)}
-            style={{
-              background: 'none',
-              border: 'none',
-              fontSize: '15px',
-              color: 'var(--muted)',
-              cursor: 'pointer',
-              transition: 'color 0.2s',
-              fontFamily: 'inherit',
-              
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text)')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--muted)')}
-          >
-            {item}
+    <nav className="nav">
+      <a className="logo" href="#top">
+        Nicolas<span>.Dev</span>
+      </a>
+      <div className="nav-links">
+        {items.map(([id, label]) => (
+          <button key={id} className={active === id ? 'active' : ''} onClick={() => go(id)}>
+            {label}
           </button>
         ))}
+        <a
+          className="cta"
+          href="#contato"
+          onClick={(e) => {
+            e.preventDefault()
+            go('contato')
+          }}
+        >
+          Contato
+        </a>
       </div>
     </nav>
   )
