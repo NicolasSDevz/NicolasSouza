@@ -5,7 +5,8 @@ interface Project {
   tags: string[]
   url: string
   display: string
-  gradient: string
+  c1: string
+  c2: string
 }
 
 const featured: Project[] = [
@@ -17,7 +18,8 @@ const featured: Project[] = [
     tags: ['Limpeza pós-obra', 'SEO', 'WhatsApp', 'Responsivo'],
     url: 'https://limpezatecnica.com.br/',
     display: 'limpezatecnica.com.br',
-    gradient: 'linear-gradient(135deg,#0f766e,#0e7490 60%,#1e3a8a)',
+    c1: '#0f766e',
+    c2: '#38bdf8',
   },
   {
     type: 'site institucional · BA',
@@ -27,7 +29,8 @@ const featured: Project[] = [
     tags: ['Alto padrão', 'Salvador', 'SEO local', 'Responsivo'],
     url: 'https://dcservicosba.com.br/',
     display: 'dcservicosba.com.br',
-    gradient: 'linear-gradient(135deg,#334155,#64748b 55%,#a78bfa)',
+    c1: '#475569',
+    c2: '#a78bfa',
   },
   {
     type: 'site institucional · ES',
@@ -37,7 +40,8 @@ const featured: Project[] = [
     tags: ['Pós-obra', 'Vidros e fachadas', 'Grande Vitória', 'Responsivo'],
     url: 'https://impactuslimpeza.com.br/',
     display: 'impactuslimpeza.com.br',
-    gradient: 'linear-gradient(135deg,#075985,#0284c7 55%,#38bdf8)',
+    c1: '#075985',
+    c2: '#38bdf8',
   },
 ]
 
@@ -50,7 +54,8 @@ const studies: Project[] = [
     tags: ['Expo', 'React', 'Firebase', 'QR Scanner'],
     url: 'https://github.com/DevNicolas01',
     display: 'github.com/DevNicolas01',
-    gradient: 'linear-gradient(135deg,#7c3aed,#db2777)',
+    c1: '#7c3aed',
+    c2: '#db2777',
   },
   {
     type: 'landing page',
@@ -59,7 +64,8 @@ const studies: Project[] = [
     tags: ['HTML', 'Tailwind', 'Vite', 'JavaScript'],
     url: 'https://github.com/DevNicolas01',
     display: 'github.com/DevNicolas01',
-    gradient: 'linear-gradient(135deg,#92400e,#d97706)',
+    c1: '#92400e',
+    c2: '#f59e0b',
   },
   {
     type: 'landing page',
@@ -68,7 +74,8 @@ const studies: Project[] = [
     tags: ['HTML', 'Tailwind', 'Vite', 'JavaScript'],
     url: 'https://github.com/DevNicolas01',
     display: 'github.com/DevNicolas01',
-    gradient: 'linear-gradient(135deg,#0369a1,#06b6d4)',
+    c1: '#0369a1',
+    c2: '#22d3ee',
   },
 ]
 
@@ -77,19 +84,11 @@ const tilt = (e: React.MouseEvent<HTMLElement>) => {
   const b = e.currentTarget.getBoundingClientRect()
   const x = (e.clientX - b.left) / b.width - 0.5
   const y = (e.clientY - b.top) / b.height - 0.5
-  el.style.transform = `rotateY(${x * 9}deg) rotateX(${-y * 9}deg) translateY(-4px)`
+  el.style.transform = `rotateY(${x * 8}deg) rotateX(${-y * 8}deg) translateY(-4px)`
 }
 const untilt = (e: React.MouseEvent<HTMLElement>) => {
   ;(e.currentTarget.firstElementChild as HTMLElement).style.transform = ''
 }
-
-const sparkles = [
-  [18, 22, 0],
-  [72, 30, 1],
-  [40, 74, 2],
-  [84, 68, 0.5],
-  [12, 62, 1.6],
-]
 
 function Card({ p, i }: { p: Project; i: number }) {
   return (
@@ -110,14 +109,47 @@ function Card({ p, i }: { p: Project; i: number }) {
             <i />
             <em>{p.display}</em>
           </div>
-          <div className="shot" style={{ ['--g' as string]: p.gradient }}>
-            {sparkles.map(([x, y, d], k) => (
-              <span key={k} className="sparkle" style={{ left: `${x}%`, top: `${y}%`, animationDelay: `${d}s` }} />
-            ))}
-            <div className="mark">
-              <b>{p.name}</b>
-              <small>{p.type.split('·')[0]}</small>
+          <div className="shot" style={{ ['--c1' as string]: p.c1, ['--c2' as string]: p.c2 }}>
+            <div className="page">
+              <div className="w-nav">
+                <div className="logo-pill">{p.name}</div>
+                <span />
+                <span />
+                <span />
+                <b />
+              </div>
+              <div className="w-hero">
+                <div className="lines">
+                  <i />
+                  <i />
+                  <u />
+                  <u />
+                  <em />
+                </div>
+                <div className="img" />
+              </div>
+              <div className="w-row">
+                <i />
+                <i />
+                <i />
+              </div>
+              <div className="w-band" />
+              <div className="w-row">
+                <i />
+                <i />
+                <i />
+              </div>
+              <div className="w-hero">
+                <div className="img" />
+                <div className="lines">
+                  <i />
+                  <i />
+                  <u />
+                  <u />
+                </div>
+              </div>
             </div>
+            <span className="visit">Visitar ↗</span>
           </div>
         </div>
         <div className="info">
@@ -142,11 +174,13 @@ export default function Projects() {
     <section id="projetos">
       <div className="wrap">
         <div className="reveal">
-          <div className="label">projetos</div>
+          <div className="label">
+            <b>03</b> projetos
+          </div>
           <h2 className="h2">
-            Sites que estão <span className="grad-text">no ar</span> trabalhando.
+            Sites que estão <span className="em">no ar</span> trabalhando.
           </h2>
-          <p className="lead">Projetos reais, de clientes do segmento de limpeza. Clique para visitar.</p>
+          <p className="lead">Projetos reais, de clientes do segmento de limpeza. Passe o mouse e clique para visitar.</p>
         </div>
         <div className="projects">
           {featured.map((p, i) => (

@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { go } from '../hooks'
+import Mark from './Mark'
 
 const items = [
   ['sobre', 'Sobre'],
@@ -7,10 +9,9 @@ const items = [
   ['skills', 'Skills'],
 ]
 
-const go = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
-
 export default function Nav() {
   const [active, setActive] = useState('')
+  const [hide, setHide] = useState(false)
 
   useEffect(() => {
     const io = new IntersectionObserver(
@@ -21,13 +22,26 @@ export default function Nav() {
       const el = document.getElementById(id)
       if (el) io.observe(el)
     })
-    return () => io.disconnect()
+    let last = scrollY
+    const onScroll = () => {
+      setHide(scrollY > last && scrollY > 200)
+      last = scrollY
+    }
+    addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      io.disconnect()
+      removeEventListener('scroll', onScroll)
+    }
   }, [])
 
   return (
-    <nav className="nav">
-      <a className="logo" href="#top">
-        Nicolas<span>.Dev</span>
+    <nav className={'nav' + (hide ? ' hide' : '')}>
+      <a className="logo" href="#top" aria-label="Nicolas Souza, início">
+        <Mark />
+        <span className="logo-text">
+          <b>Nicolas Souza</b>
+          <small>Dev · Marketing</small>
+        </span>
       </a>
       <div className="nav-links">
         {items.map(([id, label]) => (

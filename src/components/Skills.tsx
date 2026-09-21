@@ -28,36 +28,42 @@ const skills: Skill[] = [
 ]
 
 const BASE = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons'
+const half = Math.ceil(skills.length / 2)
+
+function Row({ items, rev }: { items: Skill[]; rev?: boolean }) {
+  return (
+    <div className={'track' + (rev ? ' rev' : '')}>
+      {[0, 1, 2, 3].flatMap((k) =>
+        items.map((s) => (
+          <div key={`${k}-${s.name}`} className={'pill' + (s.highlight ? ' hl' : '')}>
+            <img
+              src={`${BASE}/${s.icon}.svg`}
+              alt={s.name}
+              loading="lazy"
+              style={{ filter: s.invert ? 'invert(1)' : 'none' }}
+            />
+            {s.name}
+          </div>
+        ))
+      )}
+    </div>
+  )
+}
 
 export default function Skills() {
   return (
     <section id="skills">
-      <div className="wrap">
-        <div className="reveal">
-          <div className="label">skills</div>
-          <h2 className="h2">
-            Stack do <span className="grad-text">dia a dia.</span>
-          </h2>
+      <div className="wrap reveal">
+        <div className="label">
+          <b>04</b> skills
         </div>
-        <div className="skills">
-          {skills.map((s, i) => (
-            <div
-              key={s.name}
-              className={`skill reveal${s.highlight ? ' hl' : ''}`}
-              style={{ ['--d' as string]: `${(i % 6) * 0.05}s` }}
-            >
-              <img
-                src={`${BASE}/${s.icon}.svg`}
-                alt={s.name}
-                width={34}
-                height={34}
-                loading="lazy"
-                style={{ filter: s.invert ? 'invert(1)' : 'none' }}
-              />
-              <span>{s.name}</span>
-            </div>
-          ))}
-        </div>
+        <h2 className="h2">
+          Stack do <span className="em">dia a dia.</span>
+        </h2>
+      </div>
+      <div className="mrows">
+        <Row items={skills.slice(0, half)} />
+        <Row items={skills.slice(half)} rev />
       </div>
     </section>
   )

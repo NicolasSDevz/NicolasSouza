@@ -6,15 +6,14 @@ const items = [
   'SEO local',
   'React & Node.js',
   'Landing pages',
-  'Arrow Shot',
+  'Rastreamento',
 ]
 
 export default function Marquee() {
-  const row = [...items, ...items]
   return (
     <div className="marquee" aria-hidden>
       <div className="track">
-        {[0, 1].flatMap((k) => row.map((t, i) => <span key={`${k}-${i}`}>{t}</span>))}
+        {[0, 1].flatMap((k) => items.map((t, i) => <span key={`${k}-${i}`}>{t}</span>))}
       </div>
     </div>
   )

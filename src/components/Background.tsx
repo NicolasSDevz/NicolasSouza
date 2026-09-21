@@ -23,12 +23,6 @@ export default function Background() {
   return (
     <>
       <div className="progress" id="progress" />
-      <div className="bg-aurora">
-        <i className="blob b1" />
-        <i className="blob b2" />
-        <i className="blob b3" />
-      </div>
-      <div className="bg-grid" />
       <div className="bg-glow" />
       <div className="bg-grain" />
     </>
