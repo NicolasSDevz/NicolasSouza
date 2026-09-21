@@ -3,25 +3,99 @@ import { useEffect, useRef } from 'react'
 const clamp = (v: number) => Math.min(Math.max(v, 0), 1)
 
 const stages = [
-  { t: 'Interface', p: 'Tudo começa em uma tela: rápida, responsiva e pensada para quem vai usar.' },
-  { t: 'Componentes', p: 'Por baixo, cada tela é um conjunto de componentes React reutilizáveis e tipados.' },
-  { t: 'API', p: 'APIs em Node.js e .NET cuidam das regras de negócio, autenticação e integrações.' },
-  { t: 'Dados', p: 'Firebase, MySQL e MongoDB guardam tudo, com modelagem pensada para crescer.' },
+  { t: 'Front-end', p: 'React e TypeScript: componentes reutilizáveis e tipados, com interface rápida e responsiva.' },
+  { t: 'Back-end', p: 'APIs em Node.js e .NET cuidam das regras de negócio, da autenticação e das integrações.' },
+  { t: 'Banco de dados', p: 'Modelagem em MySQL, MongoDB e Firebase, pensada para o produto crescer.' },
+  { t: 'Deploy', p: 'Build, versionamento com Git e publicação na Vercel. Do commit ao ar.' },
 ]
 
-const routes: Array<[string, string]> = [
-  ['GET', '/proposals'],
-  ['POST', '/quotes'],
-  ['PUT', '/proposals/:id'],
-  ['GET', '/results'],
-  ['POST', '/auth/login'],
+// ---- código exibido nas janelas ----
+const react = [
+  'export function ProposalCard({ p }: Props) {',
+  '  const [open, setOpen] = useState(false)',
+  '  return (',
+  '    <Card onClick={() => setOpen(!open)}>',
+  '      <h3>{p.client}</h3>',
+  '      <Price value={p.total} />',
+  '    </Card>',
+  '  )',
+  '}',
+]
+const api = [
+  "app.post('/quotes', auth, async (req, res) => {",
+  '  const { items, margin } = req.body',
+  '  const total = calcPrice(items, margin)',
+  "  await db.collection('proposals').add({",
+  "    total, status: 'open',",
+  '  })',
+  '  res.status(201).json({ total })',
+  '})',
+]
+const sql = [
+  'CREATE TABLE proposals (',
+  '  id      INT PRIMARY KEY,',
+  '  client  VARCHAR(80) NOT NULL,',
+  '  total   DECIMAL(10, 2),',
+  "  status  ENUM('open', 'won', 'lost'),",
+  '  created DATETIME DEFAULT NOW()',
+  ');',
+  '-- índices por cliente e status',
+]
+const term = [
+  '$ git commit -m "feat: proposals"',
+  '$ npm run build',
+  '✓ built in 2.1s',
+  '$ vercel --prod',
+  '✓ deployed to production',
 ]
 
-const tables: Array<[string, number]> = [
-  ['proposals', 3],
-  ['users', 3],
-  ['plans', 2],
-]
+type Tok = [string, string]
+const RE =
+  /(--.*$|\/\/.*$)|('[^']*'|"[^"]*")|(<\/?[A-Z]\w*)|\b(export|function|const|return|await|async|CREATE|TABLE|NOT|NULL|PRIMARY|KEY|DEFAULT|INT|VARCHAR|DECIMAL|ENUM|DATETIME|NOW)\b|(\b\d+\b)|(\b[a-zA-Z_]\w*)(?=\()|(^\$ |^✓.*$)/g
+const CLS = ['', 'm', 's', 't', 'k', 'n', 'f', 'sh']
+
+// destaque de sintaxe simples (o suficiente para o visual)
+function highlight(line: string): Tok[] {
+  const out: Tok[] = []
+  let last = 0
+  for (const m of line.matchAll(RE)) {
+    const i = m.index ?? 0
+    if (i > last) out.push(['', line.slice(last, i)])
+    const g = m.slice(1).findIndex((x) => x !== undefined) + 1
+    out.push([g === 7 && m[0].startsWith('✓') ? 'ok' : CLS[g], m[0]])
+    last = i + m[0].length
+  }
+  if (last < line.length) out.push(['', line.slice(last)])
+  return out
+}
+
+function Win({ cls, i, file, lines, caret }: { cls: string; i: number; file: string; lines: string[]; caret?: boolean }) {
+  return (
+    <div className={'layer ' + cls} style={{ ['--i' as string]: i }}>
+      <div className="win-bar">
+        <i />
+        <i />
+        <i />
+        <em>{file}</em>
+      </div>
+      <div className="win-code">
+        {lines.map((line, li) => (
+          <div className="row" key={li}>
+            <span className="no">{li + 1}</span>
+            <span className="ln" style={{ ['--n' as string]: line.length, ['--d' as string]: `${0.15 + li * 0.22}s` }}>
+              {highlight(line).map(([c, x], k) => (
+                <span key={k} className={c}>
+                  {x}
+                </span>
+              ))}
+              {caret && li === lines.length - 1 && <span className="caret" />}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export default function Showcase() {
   const box = useRef<HTMLElement>(null)
@@ -65,6 +139,8 @@ export default function Showcase() {
     const io = new IntersectionObserver(
       ([e]) => {
         removeEventListener('scroll', onScroll)
+        // "live" liga a digitação e a varredura só enquanto a seção está na tela
+        st.dataset.live = e.isIntersecting ? '1' : '0'
         if (e.isIntersecting) {
           update()
           addEventListener('scroll', onScroll, { passive: true })
@@ -83,14 +159,14 @@ export default function Showcase() {
 
   return (
     <section className="show" id="showcase" ref={box}>
-      <div className="show-sticky" ref={sticky} data-stage="0">
+      <div className="show-sticky" ref={sticky} data-stage="0" data-live="0">
         <div className="wrap show-grid">
           <div className="show-copy">
             <div className="label">
               <b>stack</b> arquitetura
             </div>
             <h2 className="h2">
-              Do pixel ao <span className="em">banco de dados.</span>
+              Do commit ao <span className="em">deploy.</span>
             </h2>
             <div className="caps">
               {stages.map((s, i) => (
@@ -112,90 +188,23 @@ export default function Showcase() {
           <div className="scene" aria-hidden>
             <div className="persp">
               <div className="stack">
-                {/* 0 · banco de dados */}
-                <div className="layer l-db" style={{ ['--i' as string]: 0 }}>
-                  <div className="lbl-mono">firestore</div>
-                  <div className="tables">
-                    {tables.map(([name, n]) => (
-                      <div key={name} className="tbl">
-                        <b>{name}</b>
-                        {Array.from({ length: n }, (_, k) => (
-                          <i key={k} style={{ width: `${88 - k * 18}%` }} />
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 1 · API */}
-                <div className="layer l-api" style={{ ['--i' as string]: 1 }}>
-                  <div className="lbl-mono">server.ts</div>
-                  <div className="routes">
-                    {routes.map(([m, path]) => (
-                      <div key={path} className="route">
-                        <span className={'m ' + m.toLowerCase()}>{m}</span>
-                        <code>{path}</code>
-                        <em>200</em>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 2 · componentes */}
-                <div className="layer l-comp" style={{ ['--i' as string]: 2 }}>
-                  <div className="box" style={{ top: 38, height: 44 }}>{'<Header />'}</div>
-                  <div className="box" style={{ top: 92, height: 96 }}>{'<StatCard />'}</div>
-                  <div className="box" style={{ top: 198, height: 120 }}>{'<ProposalList />'}</div>
-                  <div className="box" style={{ top: 330, height: 44 }}>{'<Button />'}</div>
-                  <div className="box" style={{ top: 424, height: 40 }}>{'<TabBar />'}</div>
-                </div>
-
-                {/* 3 · interface (o celular) */}
-                <div className="layer l-ui" style={{ ['--i' as string]: 3 }}>
-                  <div className="notch" />
-                  <div className="u-head">
-                    <b>Propostas</b>
-                    <span />
-                  </div>
-                  <div className="u-stat">
-                    <small>Fechado no mês</small>
-                    <b>R$ 5.900</b>
-                    <div className="bars">
-                      {[40, 62, 48, 80, 66, 100].map((h, i) => (
-                        <i key={i} style={{ height: `${h}%` }} />
-                      ))}
-                    </div>
-                  </div>
-                  <div className="u-list">
-                    {['Pós-obra · Apto 82', 'Fachada · Edifício', 'Pós-obra · Loja'].map((t) => (
-                      <div key={t}>
-                        <i />
-                        {t}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="u-btn">+ Nova proposta</div>
-                  <div className="u-tab">
-                    <i />
-                    <i />
-                    <i />
-                    <i />
-                  </div>
-                </div>
+                <Win cls="l-term" i={0} file="terminal" lines={term} caret />
+                <Win cls="l-sql" i={1} file="schema.sql" lines={sql} />
+                <Win cls="l-api" i={2} file="server.ts" lines={api} />
+                <Win cls="l-react" i={3} file="ProposalCard.tsx" lines={react} />
               </div>
-
               <div className="labs">
-                <div className="lab lab-ui" style={{ ['--k' as string]: 3 }}>
-                  Interface <small>React · Expo</small>
+                <div className="lab lab-react" style={{ ['--k' as string]: 3 }}>
+                  Front-end <small>React · TypeScript</small>
                 </div>
-                <div className="lab lab-comp" style={{ ['--k' as string]: 2 }}>
-                  Componentes <small>TypeScript</small>
+                <div className="lab lab-api" style={{ ['--k' as string]: 2 }}>
+                  Back-end <small>Node.js · .NET</small>
                 </div>
-                <div className="lab lab-api" style={{ ['--k' as string]: 1 }}>
-                  API <small>Node.js · .NET</small>
+                <div className="lab lab-sql" style={{ ['--k' as string]: 1 }}>
+                  Dados <small>MySQL · MongoDB · Firebase</small>
                 </div>
-                <div className="lab lab-db" style={{ ['--k' as string]: 0 }}>
-                  Dados <small>Firebase · MySQL · MongoDB</small>
+                <div className="lab lab-term" style={{ ['--k' as string]: 0 }}>
+                  Deploy <small>Git · Vercel</small>
                 </div>
               </div>
             </div>
