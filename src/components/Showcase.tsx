@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const clamp = (v: number) => Math.min(Math.max(v, 0), 1)
 
@@ -42,18 +42,66 @@ const sql = [
   '-- índices por cliente e status',
 ]
 const term = [
-  '$ git commit -m "feat: proposals"',
-  '[main 3f9a1c2] 4 files changed',
+  '$ npm test',
+  '✓ calcPrice › applies margin',
+  '✓ proposals › creates quote',
+  '✓ 24 tests passed',
   '$ npm run build',
-  'vite building for production...',
-  '✓ 142 modules transformed',
   '✓ built in 2.1s',
   '$ vercel --prod',
   'deploying to production...',
   '✓ deployed to production',
-  '$ ',
 ]
 const TERM_BAR_AFTER = 7 // barra de progresso depois da linha "deploying..."
+
+// logs "ao vivo" que chegam depois do deploy
+const reqs: Array<[string, string, string]> = [
+  ['GET', '/proposals', '200'],
+  ['POST', '/quotes', '201'],
+  ['GET', '/results', '200'],
+  ['PUT', '/proposals/42', '200'],
+  ['GET', '/auth/me', '200'],
+  ['POST', '/auth/login', '200'],
+]
+
+function LiveLogs({ on }: { on: boolean }) {
+  const [items, setItems] = useState<Array<{ id: number; t: string; m: string; p: string; s: string; ms: number }>>([])
+  useEffect(() => {
+    if (!on) {
+      setItems([])
+      return
+    }
+    let id = 0
+    let sec = 7
+    let iv = 0
+    const t0 = window.setTimeout(() => {
+      iv = window.setInterval(() => {
+        const [m, p, s] = reqs[id % reqs.length]
+        sec += 1 + (id % 3)
+        const t = `12:04:${String(sec % 60).padStart(2, '0')}`
+        const ms = 8 + ((id * 7) % 23)
+        id++
+        setItems((prev) => [...prev.slice(-3), { id, t, m, p, s, ms }])
+      }, 850)
+    }, 4700) // depois que o pipeline termina de digitar
+    return () => {
+      clearTimeout(t0)
+      clearInterval(iv)
+    }
+  }, [on])
+
+  return (
+    <div className="logs">
+      {items.length > 0 && <div className="logsep">── logs em produção ──</div>}
+      {items.map((l) => (
+        <div className="lg" key={l.id}>
+          <span className="m">{l.t}</span> <span className="f">{l.m.padEnd(4)}</span> {l.p.padEnd(14)}
+          <span className="ok">{l.s}</span> <span className="m">{l.ms}ms</span>
+        </div>
+      ))}
+    </div>
+  )
+}
 
 type Tok = [string, string]
 const RE =
@@ -83,6 +131,8 @@ function Win({
   caret,
   barAfter,
   live,
+  tabs,
+  logging,
 }: {
   cls: string
   i: number
@@ -91,6 +141,8 @@ function Win({
   caret?: boolean
   barAfter?: number
   live?: boolean
+  tabs?: string[]
+  logging?: boolean
 }) {
   return (
     <div className={'layer ' + cls} style={{ ['--i' as string]: i }}>
@@ -98,7 +150,17 @@ function Win({
         <i />
         <i />
         <i />
-        <em>{file}</em>
+        {tabs ? (
+          <div className="tabs">
+            {tabs.map((t, k) => (
+              <span key={t} className={'tab' + (k === 0 ? ' on' : '')}>
+                {t}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <em>{file}</em>
+        )}
         {live && <span className="live">LIVE</span>}
       </div>
       <div className="win-code">
@@ -129,7 +191,16 @@ function Win({
             </div>
           )
         })}
+        {tabs && <LiveLogs on={!!logging} />}
       </div>
+      {tabs && (
+        <div className="tstatus">
+          <span className="ok">● main</span>
+          <span>node 20</span>
+          <span>0 errors</span>
+          <span className="r">vercel · production</span>
+        </div>
+      )}
     </div>
   )
 }
@@ -137,6 +208,7 @@ function Win({
 export default function Showcase() {
   const box = useRef<HTMLElement>(null)
   const sticky = useRef<HTMLDivElement>(null)
+  const [logging, setLogging] = useState(false)
 
   useEffect(() => {
     const el = box.current!
@@ -160,6 +232,7 @@ export default function Showcase() {
       st.style.setProperty('--in', String(inn))
       st.style.setProperty('--t', String(t))
       st.dataset.stage = String(stage)
+      setLogging(stage === 3)
     }
 
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -227,7 +300,16 @@ export default function Showcase() {
           <div className="scene" aria-hidden>
             <div className="persp">
               <div className="stack">
-                <Win cls="l-term" i={0} file="terminal · deploy" lines={term} caret barAfter={TERM_BAR_AFTER} live />
+                <Win
+                  cls="l-term"
+                  i={0}
+                  file="terminal"
+                  lines={term}
+                  barAfter={TERM_BAR_AFTER}
+                  live
+                  tabs={['deploy', 'dev', 'tests']}
+                  logging={logging}
+                />
                 <Win cls="l-sql" i={1} file="schema.sql" lines={sql} />
                 <Win cls="l-api" i={2} file="server.ts" lines={api} />
                 <Win cls="l-react" i={3} file="ProposalCard.tsx" lines={react} />
