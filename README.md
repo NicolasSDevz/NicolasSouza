@@ -1,6 +1,6 @@
 # Portfólio — Nicolas Souza
 
-Dev Full Stack e marketing para empresas de limpeza (Arrow Shot).
+Desenvolvedor Full Stack (dev na Arrow Shot).
 React + TypeScript + Vite, sem dependências extras de animação.
 
 ## Estrutura
@@ -10,10 +10,10 @@ src/
 ├── components/
 │   ├── Background.tsx   # aurora, grid, glow do cursor, barra de progresso
 │   ├── Nav.tsx          # navegação flutuante com seção ativa
-│   ├── Hero.tsx         # bolhas em canvas + texto digitado
+│   ├── Hero.tsx         # alvo com flecha, grade de pontos e texto digitado
 │   ├── Marquee.tsx
 │   ├── About.tsx        # contadores animados
-│   ├── Services.tsx     # Arrow Shot
+│   ├── Services.tsx     # atuação (front, back, mobile, dados)
 │   ├── Projects.tsx     # sites no ar + estudos
 │   ├── Skills.tsx
 │   ├── Contact.tsx

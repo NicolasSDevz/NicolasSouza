@@ -1,12 +1,30 @@
 import type { ReactNode } from 'react'
 
-const spot = (e: React.MouseEvent<HTMLElement>) => {
-  const b = e.currentTarget.getBoundingClientRect()
-  e.currentTarget.style.setProperty('--cx', e.clientX - b.left + 'px')
-  e.currentTarget.style.setProperty('--cy', e.clientY - b.top + 'px')
-}
-
 const icons: Record<string, ReactNode> = {
+  code: (
+    <svg viewBox="0 0 24 24">
+      <path d="M8 8l-5 4 5 4M16 8l5 4-5 4M14 5l-4 14" />
+    </svg>
+  ),
+  server: (
+    <svg viewBox="0 0 24 24">
+      <rect x="3" y="4" width="18" height="6" rx="1.5" />
+      <rect x="3" y="14" width="18" height="6" rx="1.5" />
+      <path d="M7 7h.01M7 17h.01" />
+    </svg>
+  ),
+  phone: (
+    <svg viewBox="0 0 24 24">
+      <rect x="7" y="2" width="10" height="20" rx="2.5" />
+      <path d="M11 18h2" />
+    </svg>
+  ),
+  db: (
+    <svg viewBox="0 0 24 24">
+      <ellipse cx="12" cy="6" rx="8" ry="3" />
+      <path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" />
+    </svg>
+  ),
   target: (
     <svg viewBox="0 0 24 24">
       <circle cx="12" cy="12" r="9" />
@@ -14,63 +32,38 @@ const icons: Record<string, ReactNode> = {
       <circle cx="12" cy="12" r="1" />
     </svg>
   ),
-  globe: (
-    <svg viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18" />
-    </svg>
-  ),
-  pin: (
-    <svg viewBox="0 0 24 24">
-      <path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z" />
-      <circle cx="12" cy="10" r="2.5" />
-    </svg>
-  ),
-  chart: (
-    <svg viewBox="0 0 24 24">
-      <path d="M4 20V10M10 20V4M16 20v-7M2 20h20" />
-    </svg>
-  ),
-  ads: (
-    <svg viewBox="0 0 24 24">
-      <path d="M4 14l16-8v12L4 14z" />
-      <path d="M7 15v4" />
-    </svg>
-  ),
 }
 
 const cards = [
-  { i: 'globe', t: 'Sites e landing pages', p: 'Design rápido, responsivo e pensado para levar o visitante direto ao WhatsApp.' },
-  { i: 'ads', t: 'Tráfego pago', p: 'Campanhas no Google Ads e Meta Ads com foco em orçamentos qualificados.' },
-  { i: 'pin', t: 'SEO local', p: 'Presença forte no Google para quem busca limpeza na sua cidade.' },
-  { i: 'chart', t: 'Rastreamento', p: 'GTM, pixels e conversões de WhatsApp para saber o que realmente traz cliente.' },
+  { i: 'code', t: 'Front-end', p: 'React, TypeScript e Tailwind. Interfaces rápidas, acessíveis e responsivas.' },
+  { i: 'server', t: 'Back-end', p: 'APIs em Node.js e .NET, com regras de negócio bem organizadas.' },
+  { i: 'phone', t: 'Mobile', p: 'Apps com Expo e Flutter, integrados a Firebase.' },
+  { i: 'db', t: 'Bancos de dados', p: 'Modelagem e consultas em MySQL, MongoDB e Firebase.' },
 ]
 
 export default function Services() {
   return (
-    <section id="arrow-shot">
+    <section id="atuacao">
       <div className="wrap">
         <div className="reveal">
           <div className="label">
-            <b>02</b> arrow shot
+            <b>02</b> atuação
           </div>
           <h2 className="h2">
-            Marketing para <span className="em">empresas de limpeza.</span>
+            Do banco de dados à <span className="em">interface.</span>
           </h2>
-          <p className="lead">
-            Da vitrine digital ao anúncio: tudo que uma empresa de limpeza precisa para ser encontrada e escolhida.
-          </p>
+          <p className="lead">Trabalho em todas as camadas de uma aplicação, com JavaScript como base.</p>
         </div>
         <div className="bento">
-          <div className="card wide reveal" onMouseMove={spot}>
+          <div className="card wide reveal">
             <div className="ico">{icons.target}</div>
             <div className="big">
-              Acertar o alvo: quem precisa de limpeza técnica <span className="em">agora.</span>
+              Dev na Arrow Shot, construindo sites para empresas de <span className="em">limpeza.</span>
             </div>
-            <p>Especialista em limpeza pós-obra, limpeza de vidros e fachadas e serviços de alto padrão.</p>
+            <p>A Arrow Shot é uma agência de marketing para limpeza. Eu cuido do desenvolvimento dos sites dos clientes.</p>
           </div>
           {cards.map((c, i) => (
-            <div key={c.t} className="card reveal" style={{ ['--d' as string]: `${(i % 3) * 0.1}s` }} onMouseMove={spot}>
+            <div key={c.t} className="card reveal" style={{ ['--d' as string]: `${(i % 3) * 0.08}s` }}>
               <span className="num">0{i + 1}</span>
               <div className="ico">{icons[c.i]}</div>
               <h3>{c.t}</h3>

@@ -4,19 +4,19 @@ export default function Background() {
   useEffect(() => {
     const root = document.documentElement
     const bar = document.getElementById('progress')
-    const move = (e: PointerEvent) => {
-      root.style.setProperty('--mx', e.clientX + 'px')
-      root.style.setProperty('--my', e.clientY + 'px')
-    }
-    const scroll = () => {
+    let raf = 0
+    const update = () => {
+      raf = 0
       const max = root.scrollHeight - innerHeight
       if (bar) bar.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`
     }
-    addEventListener('pointermove', move)
-    addEventListener('scroll', scroll, { passive: true })
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update)
+    }
+    addEventListener('scroll', onScroll, { passive: true })
     return () => {
-      removeEventListener('pointermove', move)
-      removeEventListener('scroll', scroll)
+      cancelAnimationFrame(raf)
+      removeEventListener('scroll', onScroll)
     }
   }, [])
 
@@ -24,7 +24,6 @@ export default function Background() {
     <>
       <div className="progress" id="progress" />
       <div className="bg-glow" />
-      <div className="bg-grain" />
     </>
   )
 }

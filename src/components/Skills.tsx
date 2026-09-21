@@ -33,7 +33,7 @@ const half = Math.ceil(skills.length / 2)
 function Row({ items, rev }: { items: Skill[]; rev?: boolean }) {
   return (
     <div className={'track' + (rev ? ' rev' : '')}>
-      {[0, 1, 2, 3].flatMap((k) =>
+      {[0, 1].flatMap((k) =>
         items.map((s) => (
           <div key={`${k}-${s.name}`} className={'pill' + (s.highlight ? ' hl' : '')}>
             <img

@@ -4,7 +4,7 @@ import Mark from './Mark'
 
 const items = [
   ['sobre', 'Sobre'],
-  ['arrow-shot', 'Arrow Shot'],
+  ['atuacao', 'Atuação'],
   ['projetos', 'Projetos'],
   ['skills', 'Skills'],
 ]
@@ -40,7 +40,7 @@ export default function Nav() {
         <Mark />
         <span className="logo-text">
           <b>Nicolas Souza</b>
-          <small>Dev · Marketing</small>
+          <small>Full Stack Dev</small>
         </span>
       </a>
       <div className="nav-links">

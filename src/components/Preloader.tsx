@@ -46,7 +46,7 @@ export default function Preloader() {
         <Mark progress={n} />
         <div className="pre-name">
           Nicolas Souza
-          <small>Dev Full Stack · Marketing</small>
+          <small>Desenvolvedor Full Stack</small>
         </div>
         <div className="pre-count">{String(Math.round(n * 100)).padStart(3, '0')}</div>
       </div>

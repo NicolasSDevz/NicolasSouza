@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 
 // Palavras iniciadas com "_" ganham destaque
 const statement =
-  'Sou desenvolvedor full stack e trabalho com marketing na _Arrow_ _Shot._ Crio sites, estruturo campanhas e organizo o rastreamento para que cada real investido vire _orçamento_ pedido.'
+  'Sou desenvolvedor full stack e construo aplicações web e mobile de ponta a ponta com _JavaScript,_ _React_ e Node.js. Acredito que bom software vai além de funcionar: precisa ser legível, fácil de manter e preparado para _crescer._'
 
-// Acende as palavras conforme o scroll
+// Acende as palavras conforme o scroll (só processa enquanto está na tela)
 function ScrollText() {
   const ref = useRef<HTMLParagraphElement>(null)
   const words = statement.split(' ')
@@ -13,23 +13,34 @@ function ScrollText() {
     const el = ref.current!
     const spans = Array.from(el.querySelectorAll<HTMLElement>('.word'))
     let raf = 0
+    let last = -1
     const update = () => {
       raf = 0
       const b = el.getBoundingClientRect()
       const p = Math.min(Math.max((innerHeight * 0.85 - b.top) / (b.height + innerHeight * 0.25), 0), 1)
       const count = Math.round(p * spans.length)
+      if (count === last) return
+      last = count
       spans.forEach((s, i) => s.classList.toggle('on', i < count))
     }
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update)
     }
-    update()
-    addEventListener('scroll', onScroll, { passive: true })
-    addEventListener('resize', onScroll)
+    const io = new IntersectionObserver(
+      ([e]) => {
+        removeEventListener('scroll', onScroll)
+        if (e.isIntersecting) {
+          update()
+          addEventListener('scroll', onScroll, { passive: true })
+        }
+      },
+      { rootMargin: '20% 0px' }
+    )
+    io.observe(el)
     return () => {
       cancelAnimationFrame(raf)
+      io.disconnect()
       removeEventListener('scroll', onScroll)
-      removeEventListener('resize', onScroll)
     }
   }, [])
 
@@ -56,7 +67,7 @@ function Count({ to, suffix = '' }: { to: number; suffix?: string }) {
       io.disconnect()
       const t0 = performance.now()
       const step = (t: number) => {
-        const p = Math.min((t - t0) / 1400, 1)
+        const p = Math.min((t - t0) / 1200, 1)
         setN(Math.round(to * (1 - Math.pow(1 - p, 3))))
         if (p < 1) requestAnimationFrame(step)
       }
@@ -98,29 +109,29 @@ export default function About() {
               </div>
             </div>
             <div className="edu-item reveal" style={{ ['--d' as string]: '.2s' }}>
-              <span className="yr">STACK</span>
+              <span className="yr">ATUAL</span>
               <div>
-                <b>JavaScript de ponta a ponta</b>
-                <small>React, Expo, Node.js e bancos de dados</small>
+                <b>Desenvolvedor na Arrow Shot</b>
+                <small>Sites para empresas de limpeza</small>
               </div>
             </div>
           </div>
           <div className="stats reveal" style={{ ['--d' as string]: '.15s' }}>
             <div className="stat">
               <Count to={3} suffix="+" />
-              <small>sites de limpeza no ar</small>
+              <small>sites em produção</small>
             </div>
             <div className="stat">
               <Count to={3} />
-              <small>estados atendidos: RS, BA e ES</small>
+              <small>projetos pessoais</small>
+            </div>
+            <div className="stat">
+              <Count to={19} />
+              <small>tecnologias na stack</small>
             </div>
             <div className="stat">
               <Count to={2} />
-              <small>frentes: dev + marketing</small>
-            </div>
-            <div className="stat">
-              <Count to={100} suffix="%" />
-              <small>foco em resultado</small>
+              <small>formações em TI</small>
             </div>
           </div>
         </div>

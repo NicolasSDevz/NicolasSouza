@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { go, useLoaded } from '../hooks'
 
-const words = ['sites que vendem.', 'marketing que converte.', 'sistemas que escalam.', 'apps que encantam.']
+const words = ['aplicações web.', 'apps mobile.', 'APIs e sistemas.', 'sites rápidos.']
 
 function useTyper(start: boolean) {
   const [text, setText] = useState('')
@@ -53,64 +53,96 @@ function Split({ text, start, className = '' }: { text: string; start: number; c
   )
 }
 
-// Campo de pontos que reage ao cursor
+// Grade de pontos: a base é desenhada uma vez; só os pontos perto do mouse
+// são redesenhados, e apenas enquanto o mouse se move sobre o hero.
 function DotField() {
-  const ref = useRef<HTMLCanvasElement>(null)
+  const base = useRef<HTMLCanvasElement>(null)
+  const top = useRef<HTMLCanvasElement>(null)
   useEffect(() => {
-    const c = ref.current!
-    const ctx = c.getContext('2d')!
-    const dpr = Math.min(devicePixelRatio || 1, 2)
-    const sp = 36
+    const cb = base.current!
+    const ct = top.current!
+    const bctx = cb.getContext('2d')!
+    const tctx = ct.getContext('2d')!
+    const dpr = Math.min(devicePixelRatio || 1, 1.5)
+    const sp = 44
+    const R = 150
     let w = 0
     let h = 0
     let raf = 0
+    let visible = true
     const m = { x: -999, y: -999 }
+
     const resize = () => {
-      w = c.clientWidth
-      h = c.clientHeight
-      c.width = w * dpr
-      c.height = h * dpr
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-    }
-    const move = (e: PointerEvent) => {
-      const b = c.getBoundingClientRect()
-      m.x = e.clientX - b.left
-      m.y = e.clientY - b.top
-    }
-    const draw = (t: number) => {
-      ctx.clearRect(0, 0, w, h)
+      w = cb.clientWidth
+      h = cb.clientHeight
+      for (const c of [cb, ct]) {
+        c.width = w * dpr
+        c.height = h * dpr
+      }
+      bctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      tctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      bctx.clearRect(0, 0, w, h)
       for (let x = sp / 2; x < w; x += sp) {
         for (let y = sp / 2; y < h; y += sp) {
+          bctx.fillStyle = `rgba(255,255,255,${0.2 * (1 - y / h)})`
+          bctx.fillRect(x - 1, y - 1, 2, 2)
+        }
+      }
+    }
+    const draw = () => {
+      raf = 0
+      tctx.clearRect(0, 0, w, h)
+      if (!visible) return
+      const x0 = Math.max(Math.floor((m.x - R) / sp), 0)
+      const x1 = Math.ceil((m.x + R) / sp)
+      const y0 = Math.max(Math.floor((m.y - R) / sp), 0)
+      const y1 = Math.ceil((m.y + R) / sp)
+      for (let gx = x0; gx <= x1; gx++) {
+        for (let gy = y0; gy <= y1; gy++) {
+          const x = gx * sp + sp / 2
+          const y = gy * sp + sp / 2
           const dx = x - m.x
           const dy = y - m.y
           const d = Math.hypot(dx, dy)
-          const k = d < 170 ? 1 - d / 170 : 0
-          const wave = 0.5 + 0.5 * Math.sin((x + y) / 120 + t / 1100)
-          const ox = k ? (dx / d) * k * 12 : 0
-          const oy = k ? (dy / d) * k * 12 : 0
-          ctx.beginPath()
-          ctx.arc(x + ox, y + oy, 1 + k * 2.4 + wave * 0.5, 0, 6.283)
-          ctx.fillStyle = k > 0.02 ? `rgba(255,91,35,${0.3 + k * 0.7})` : `rgba(244,241,234,${0.08 + wave * 0.14})`
-          ctx.fill()
+          if (d >= R || d === 0) continue
+          const k = 1 - d / R
+          tctx.beginPath()
+          tctx.arc(x + (dx / d) * k * 10, y + (dy / d) * k * 10, 1 + k * 2.2, 0, 6.283)
+          tctx.fillStyle = `rgba(255,255,255,${0.15 + k * 0.7})`
+          tctx.fill()
         }
       }
-      raf = requestAnimationFrame(draw)
     }
+    const move = (e: PointerEvent) => {
+      const b = cb.getBoundingClientRect()
+      m.x = e.clientX - b.left
+      m.y = e.clientY - b.top
+      if (!raf) raf = requestAnimationFrame(draw)
+    }
+    const io = new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting
+      if (!visible) tctx.clearRect(0, 0, w, h)
+    })
     resize()
+    io.observe(cb)
     addEventListener('resize', resize)
-    addEventListener('pointermove', move)
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) draw(0)
-    else raf = requestAnimationFrame(draw)
+    addEventListener('pointermove', move, { passive: true })
     return () => {
       cancelAnimationFrame(raf)
+      io.disconnect()
       removeEventListener('resize', resize)
       removeEventListener('pointermove', move)
     }
   }, [])
-  return <canvas ref={ref} aria-hidden />
+  return (
+    <>
+      <canvas ref={base} aria-hidden />
+      <canvas ref={top} aria-hidden />
+    </>
+  )
 }
 
-// Alvo com flecha: assinatura da Arrow Shot
+// Alvo com flecha: assinatura visual
 function Target() {
   const tilt = useRef<HTMLDivElement>(null)
   useEffect(() => {
@@ -118,9 +150,9 @@ function Target() {
     const move = (e: PointerEvent) => {
       const x = e.clientX / innerWidth - 0.5
       const y = e.clientY / innerHeight - 0.5
-      el.style.transform = `rotateY(${x * 14}deg) rotateX(${-y * 14}deg)`
+      el.style.transform = `rotateY(${x * 12}deg) rotateX(${-y * 12}deg)`
     }
-    addEventListener('pointermove', move)
+    addEventListener('pointermove', move, { passive: true })
     return () => removeEventListener('pointermove', move)
   }, [])
 
@@ -146,19 +178,19 @@ function Target() {
           <circle className="bull" cx="200" cy="200" r="14" />
           <g transform="translate(200 200) rotate(-32)">
             <g className="arrow">
-              <line x1="16" y1="0" x2="176" y2="0" stroke="#f4f1ea" strokeWidth="3.5" strokeLinecap="round" />
-              <polygon points="0,0 24,-8 24,8" fill="#ff5b23" />
-              <polygon points="150,0 172,-13 182,-13 166,0" fill="#ff5b23" />
-              <polygon points="150,0 172,13 182,13 166,0" fill="#ff5b23" />
-              <polygon points="164,0 184,-11 192,-11 176,0" fill="#f4f1ea" />
-              <polygon points="164,0 184,11 192,11 176,0" fill="#f4f1ea" />
+              <line x1="16" y1="0" x2="176" y2="0" stroke="#ededee" strokeWidth="3.5" strokeLinecap="round" />
+              <polygon points="0,0 24,-8 24,8" fill="#ffffff" />
+              <polygon points="150,0 172,-13 182,-13 166,0" fill="#6a6a72" />
+              <polygon points="150,0 172,13 182,13 166,0" fill="#6a6a72" />
+              <polygon points="164,0 184,-11 192,-11 176,0" fill="#ededee" />
+              <polygon points="164,0 184,11 192,11 176,0" fill="#ededee" />
             </g>
           </g>
         </svg>
-        <span className="chip c1">Google Ads</span>
-        <span className="chip c2">Meta Ads</span>
-        <span className="chip c3">WhatsApp</span>
-        <span className="chip c4">SEO local</span>
+        <span className="chip c1">React</span>
+        <span className="chip c2">Node.js</span>
+        <span className="chip c3">TypeScript</span>
+        <span className="chip c4">Expo</span>
       </div>
     </div>
   )
@@ -173,22 +205,22 @@ export default function Hero() {
       <div className="wrap hero-grid">
         <div>
           <div className="badge">
-            <span className="dot" /> Disponível para novos projetos
+            <span className="dot" /> Disponível para novas oportunidades
           </div>
-          <h1 aria-label="Nicolas Souza, Dev Full Stack e marketing">
+          <h1 aria-label="Nicolas Souza, Desenvolvedor Full Stack">
             <span className="row">
               <Split text="Nicolas Souza" start={0} />
             </span>
-            <span className="row role">
-              <Split text="Dev Full Stack" start={14} />
+            <span className="row">
+              <Split text="Desenvolvedor" start={14} />
             </span>
-            <span className="row role">
-              <Split text="&" start={28} /> <Split text="marketing" start={30} className="em" />
+            <span className="row">
+              <Split text="Full Stack" start={28} className="em" />
             </span>
           </h1>
           <p className="lead">
-            Na <strong style={{ color: 'var(--text)', fontWeight: 500 }}>Arrow Shot</strong> cuido do marketing de
-            empresas de limpeza, criando{' '}
+            Dev na <strong style={{ color: 'var(--text)', fontWeight: 500 }}>Arrow Shot</strong>, agência de marketing
+            para empresas de limpeza. Construo{' '}
             <span className="rotator">
               {typed}
               <span className="cursor" />

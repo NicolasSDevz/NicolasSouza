@@ -5,43 +5,35 @@ interface Project {
   tags: string[]
   url: string
   display: string
-  c1: string
-  c2: string
 }
 
 const featured: Project[] = [
   {
-    type: 'site institucional · RS',
+    type: 'site institucional · Arrow Shot',
     name: 'Limpeza Técnica',
     description:
       'Site para empresa de limpeza pós-obra no Rio Grande do Sul, focado em captar orçamentos de residências e estabelecimentos.',
-    tags: ['Limpeza pós-obra', 'SEO', 'WhatsApp', 'Responsivo'],
+    tags: ['Front-end', 'Responsivo', 'SEO', 'Deploy'],
     url: 'https://limpezatecnica.com.br/',
     display: 'limpezatecnica.com.br',
-    c1: '#0f766e',
-    c2: '#38bdf8',
   },
   {
-    type: 'site institucional · BA',
+    type: 'site institucional · Arrow Shot',
     name: 'Donna Clean',
     description:
       'Site premium para limpeza pós-obra de alto padrão em Salvador e região metropolitana, para residências, escritórios e empresas.',
-    tags: ['Alto padrão', 'Salvador', 'SEO local', 'Responsivo'],
+    tags: ['Front-end', 'Responsivo', 'SEO', 'Deploy'],
     url: 'https://dcservicosba.com.br/',
     display: 'dcservicosba.com.br',
-    c1: '#475569',
-    c2: '#a78bfa',
   },
   {
-    type: 'site institucional · ES',
+    type: 'site institucional · Arrow Shot',
     name: 'Impactus Limpeza',
     description:
       'Site de limpeza técnica de alto padrão na Grande Vitória, com pós-obra e limpeza de vidros e fachadas.',
-    tags: ['Pós-obra', 'Vidros e fachadas', 'Grande Vitória', 'Responsivo'],
+    tags: ['Front-end', 'Responsivo', 'SEO', 'Deploy'],
     url: 'https://impactuslimpeza.com.br/',
     display: 'impactuslimpeza.com.br',
-    c1: '#075985',
-    c2: '#38bdf8',
   },
 ]
 
@@ -54,8 +46,6 @@ const studies: Project[] = [
     tags: ['Expo', 'React', 'Firebase', 'QR Scanner'],
     url: 'https://github.com/DevNicolas01',
     display: 'github.com/DevNicolas01',
-    c1: '#7c3aed',
-    c2: '#db2777',
   },
   {
     type: 'landing page',
@@ -64,8 +54,6 @@ const studies: Project[] = [
     tags: ['HTML', 'Tailwind', 'Vite', 'JavaScript'],
     url: 'https://github.com/DevNicolas01',
     display: 'github.com/DevNicolas01',
-    c1: '#92400e',
-    c2: '#f59e0b',
   },
   {
     type: 'landing page',
@@ -74,8 +62,6 @@ const studies: Project[] = [
     tags: ['HTML', 'Tailwind', 'Vite', 'JavaScript'],
     url: 'https://github.com/DevNicolas01',
     display: 'github.com/DevNicolas01',
-    c1: '#0369a1',
-    c2: '#22d3ee',
   },
 ]
 
@@ -109,7 +95,7 @@ function Card({ p, i }: { p: Project; i: number }) {
             <i />
             <em>{p.display}</em>
           </div>
-          <div className="shot" style={{ ['--c1' as string]: p.c1, ['--c2' as string]: p.c2 }}>
+          <div className="shot">
             <div className="page">
               <div className="w-nav">
                 <div className="logo-pill">{p.name}</div>
@@ -178,16 +164,16 @@ export default function Projects() {
             <b>03</b> projetos
           </div>
           <h2 className="h2">
-            Sites que estão <span className="em">no ar</span> trabalhando.
+            Sites <span className="em">em produção</span> e projetos pessoais.
           </h2>
-          <p className="lead">Projetos reais, de clientes do segmento de limpeza. Passe o mouse e clique para visitar.</p>
+          <p className="lead">Sites que desenvolvi na Arrow Shot para empresas de limpeza, e projetos próprios. Passe o mouse e clique para visitar.</p>
         </div>
         <div className="projects">
           {featured.map((p, i) => (
             <Card key={p.name} p={p} i={i} />
           ))}
         </div>
-        <h3 className="sub-title reveal">Estudos e projetos pessoais</h3>
+        <h3 className="sub-title reveal">Projetos pessoais</h3>
         <div className="projects">
           {studies.map((p, i) => (
             <Card key={p.name} p={p} i={i} />

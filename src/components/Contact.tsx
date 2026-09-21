@@ -23,10 +23,10 @@ export default function Contact() {
             <b>05</b> contato
           </div>
           <h2>
-            Vamos colocar sua empresa <span className="em">no topo?</span>
+            Vamos construir algo <span className="em">juntos?</span>
           </h2>
           <p>
-            Precisa de um site, campanhas ou um sistema sob medida? Fale comigo. Aberto também a oportunidades como
+            Tem um projeto, uma vaga ou uma ideia? Fale comigo. Estou aberto a oportunidades CLT como
             desenvolvedor júnior.
           </p>
           <div className="row">
