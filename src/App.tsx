@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 import Preloader from './components/Preloader'
 import Cursor from './components/Cursor'
 import Zeus from './components/Zeus'
+import Hud from './components/Hud'
+import { scramble } from './scramble'
 import Background from './components/Background'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
@@ -27,6 +29,20 @@ export default function App() {
     )
     document.querySelectorAll('.reveal').forEach((el) => io.observe(el))
 
+    // títulos "decifrando" quando entram na tela
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+    const sio = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            scramble(e.target as HTMLElement)
+            sio.unobserve(e.target)
+          }
+        }),
+      { threshold: 0.6 }
+    )
+    if (!reduce) document.querySelectorAll('.h2, .cta-box h2, .feature h3, .sub-title, .label').forEach((el) => sio.observe(el))
+
     // botões magnéticos
     const cleanups: Array<() => void> = []
     if (matchMedia('(pointer: fine)').matches) {
@@ -48,6 +64,7 @@ export default function App() {
     }
     return () => {
       io.disconnect()
+      sio.disconnect()
       cleanups.forEach((c) => c())
     }
   }, [])
@@ -57,6 +74,7 @@ export default function App() {
       <Preloader />
       <Cursor />
       <Zeus />
+      <Hud />
       <Background />
       <Nav />
       <main>

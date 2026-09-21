@@ -100,6 +100,7 @@ main, footer { transition: transform 1.6s var(--ease), opacity 1.2s var(--ease);
 /* ---------- type ---------- */
 .label { display: flex; align-items: center; gap: 14px; font-size: 12px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.4rem; }
 .label b { color: var(--accent); font-weight: 500; }
+.label b::before { content: '// '; color: var(--muted); }
 .label::after { content: ''; width: 60px; height: 1px; background: var(--border-hover); }
 .h2 { font-family: var(--display); font-size: clamp(32px, 5.2vw, 60px); line-height: 1.02; letter-spacing: -0.035em; font-weight: 600; margin-bottom: 1.1rem; max-width: 820px; }
 .h2 .em { font-size: 1.08em; }
@@ -374,3 +375,11 @@ footer { padding: 3rem 0 2rem; overflow: hidden; }
 @keyframes zfade { to { opacity: 0; } }
 .zeus-tag { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 601; pointer-events: none; font-family: var(--display); font-weight: 600; font-size: 13px; letter-spacing: .7em; padding-left: .7em; color: var(--accent); opacity: 0; animation: ztag 1.6s .25s forwards; }
 @keyframes ztag { 0% { opacity: 0; } 25% { opacity: .9; } 100% { opacity: 0; } }
+
+/* ---------- hud (mini terminal) ---------- */
+.hud { position: fixed; left: 18px; bottom: 16px; z-index: 240; font-family: ui-monospace, 'Cascadia Code', Consolas, monospace; font-size: 11px; letter-spacing: .04em; color: var(--muted); opacity: 0; transition: opacity .6s ease 1.6s; pointer-events: none; }
+.loaded .hud { opacity: .9; }
+.hud .pr { color: var(--accent); }
+.hud b { color: var(--text); font-weight: 400; font-variant-numeric: tabular-nums; }
+.hud i { display: inline-block; width: 6px; height: 11px; margin-left: 4px; background: var(--accent); vertical-align: -1px; animation: caretblink 1s steps(1) infinite; }
+@media (max-width: 800px) { .hud { display: none; } }
