@@ -10,6 +10,7 @@ import Hero from './components/Hero'
 import Marquee from './components/Marquee'
 import About from './components/About'
 import Services from './components/Services'
+import Showcase from './components/Showcase'
 import Projects from './components/Projects'
 import Skills from './components/Skills'
 import Contact from './components/Contact'
@@ -82,6 +83,7 @@ export default function App() {
         <Marquee />
         <About />
         <Services />
+        <Showcase />
         <Projects />
         <Skills />
         <Contact />

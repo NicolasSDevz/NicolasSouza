@@ -4,6 +4,7 @@ const sections: Array<[string, string]> = [
   ['top', 'home'],
   ['sobre', 'sobre'],
   ['atuacao', 'atuacao'],
+  ['showcase', 'arquitetura'],
   ['projetos', 'projetos'],
   ['skills', 'skills'],
   ['contato', 'contato'],
