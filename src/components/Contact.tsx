@@ -27,8 +27,7 @@ export default function Contact() {
             Vamos construir algo <span className="em">juntos?</span>
           </h2>
           <p>
-            Tem um projeto, uma vaga ou uma ideia? Fale comigo. Estou aberto a oportunidades CLT como desenvolvedor
-            júnior.
+            Estou à disposição para criação de sites e landing pages. Fale comigo.
           </p>
           <div className="row">
             <a className="btn primary" data-magnetic href={WHATS} target="_blank" rel="noopener noreferrer">

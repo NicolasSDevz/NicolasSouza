@@ -151,7 +151,7 @@ const code: Tok[][] = [
   [['', '  '], ['m', 'stack'], ['p', ': ['], ['s', '"React"'], ['p', ', '], ['s', '"Node.js"'], ['p', ', '], ['s', '"TypeScript"'], ['p', '],']],
   [['', '  '], ['m', 'mobile'], ['p', ': ['], ['s', '"Expo"'], ['p', ', '], ['s', '"Flutter"'], ['p', '],']],
   [['', '  '], ['m', 'building'], ['p', ': '], ['s', '"Deal Shot"'], ['p', ',']],
-  [['', '  '], ['m', 'openToWork'], ['p', ': '], ['k', 'true'], ['p', ',']],
+  [['', '  '], ['m', 'freelance'], ['p', ': '], ['s', '"sites & landing pages"'], ['p', ',']],
   [['p', '};']],
 ]
 const term: Tok[][] = [
@@ -232,7 +232,7 @@ export default function Hero() {
       <div className="wrap hero-grid">
         <div>
           <div className="badge">
-            <span className="dot" /> Disponível para novas oportunidades
+            <span className="dot" /> Disponível para sites e landing pages
           </div>
           <h1 aria-label="Nicolas Souza, Desenvolvedor Full Stack">
             <span className="row">
